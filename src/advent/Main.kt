@@ -5,8 +5,8 @@ import java.util.*
 
 fun main(args: Array<String>) {
     val debug: Boolean = false
-    val numDay = 8
-    val function = ::solve8
+    val numDay = 9
+    val function = ::solve9
     val startTime = System.currentTimeMillis()
     val scanner =
         Scanner(FileInputStream(if (debug) "D:\\Documents\\Dev\\projects\\adventOfCode\\inputs\\t" else "D:\\Documents\\Dev\\projects\\adventOfCode\\inputs\\inputDay$numDay.txt"))
