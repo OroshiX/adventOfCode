@@ -4,8 +4,8 @@ import java.io.FileInputStream
 import java.util.*
 
 fun main(args: Array<String>) {
-    val numDay = 1
-    val function = ::solve1
+    val numDay = 2
+    val function = ::solve2
     val startTime = System.currentTimeMillis()
     val scanner =
         Scanner(FileInputStream("D:\\Documents\\Dev\\projects\\adventOfCode\\inputs\\inputDay$numDay.txt"))
