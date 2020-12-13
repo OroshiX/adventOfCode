@@ -17,11 +17,11 @@ fun solve7(scanner: Scanner): String {
                 parent.children.add(childNode)
             }
         }
-        return numberOfParents(map["shiny gold"]!!).toString()
+        return numberOfParents1(map["shiny gold"]!!).toString()
     }
 }
 
-fun numberOfParents(node: Node): Int {
+fun numberOfParents1(node: Node): Int {
     val queue = ArrayDeque<Node>()
     queue.add(node)
     val parents = mutableSetOf<String>()
@@ -35,7 +35,7 @@ fun numberOfParents(node: Node): Int {
 
 fun parseToRule(line: String): RuleBag {
     val matches =
-        Regex("(?<parent>[\\w ]+) bags contain ((?<num1>[0-9]+) (?<child1>[\\w ]+) bags?(\\.|, (?<num2>[0-9]+) (?<child2>[\\w ]+) bags?\\.)|(?<noChild>no other bags.))").matchEntire(
+        Regex("(?<parent>[\\w ]+) bags contain ((?<noChild>no other bags)|[0-9]+ [ \\w,]+ bags?)\\.").matchEntire(
             line
         ) ?: throw IllegalArgumentException()
 
@@ -43,17 +43,20 @@ fun parseToRule(line: String): RuleBag {
         ?: throw IllegalArgumentException("No parent")
     val noChild = matches.groups["noChild"]?.value
     if (noChild != null) return RuleBag(parent, listOf())
-    val num1 = matches.groups["num1"]?.value?.toInt()
-        ?: throw IllegalArgumentException("Num1 should not be null")
-    val child1 = matches.groups["child1"]?.value
-        ?: throw IllegalArgumentException("Child 1 should not be null")
-    val num2 = matches.groups["num2"]?.value?.toInt()
-    val child2 = matches.groups["child2"]?.value
 
-    if (num2 != null && child2 != null) {
-        return RuleBag(parent, listOf(Pair(num1, child1), Pair(num2, child2)))
+    val childrenMatches =
+        Regex("(?<num>[0-9]+) (?<child>[\\w ]+) bags?").findAll(line)
+    val children = mutableListOf<Pair<Int, String>>()
+    for (childMatch in childrenMatches) {
+        val num = childMatch.groups["num"]?.value?.toInt()
+            ?: throw IllegalArgumentException("Num should not be null")
+        val child =
+            childMatch.groups["child"]?.value ?: throw IllegalArgumentException(
+                "Child should not be null"
+            )
+        children.add(Pair(num, child))
     }
-    return RuleBag(parent, listOf(Pair(num1, child1)))
+    return RuleBag(parent, children)
 }
 
 data class RuleBag(val name: String, val children: List<Pair<Int, String>>)
