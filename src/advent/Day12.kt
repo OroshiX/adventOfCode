@@ -12,7 +12,7 @@ fun solve12(scanner: Scanner): String {
                 Action(line.substring(1).toInt(), NameAction.fromName(line[0]))
             )
         }
-        return manhattan(Pair(0, 0), moveShip(actions)).toString()
+        return manhattan(Pair(0, 0), moveShip2(actions)).toString()
     }
 }
 
@@ -28,6 +28,57 @@ fun moveShip(actions: List<Action>): Pair<Int, Int> {
         pair = p
     }
     return pair
+}
+
+fun moveShip2(actions: List<Action>): Pair<Int, Int> {
+    var waypointPosition = Pair(10, 1)
+    var shipPosition = Pair(0, 0)
+    for (a in actions) {
+        val (sp, wp) = stepMoveShip2(a, waypointPosition, shipPosition)
+        shipPosition = sp
+        waypointPosition = wp
+    }
+    return shipPosition
+}
+
+fun stepMoveShip2(
+    action: Action,
+    waypointPosition: Pair<Int, Int>,
+    shipPosition: Pair<Int, Int>
+): Pair<Pair<Int, Int>, Pair<Int, Int>> {
+    var endShipPosition: Pair<Int, Int> = shipPosition
+    var endWaypointPosition: Pair<Int, Int> = waypointPosition
+
+    when (action.name) {
+        NameAction.L -> {
+            var numRotations = (action.num % 360) / 90
+            while (numRotations > 0) {
+                endWaypointPosition = rotateLeft2(endWaypointPosition)
+                numRotations--
+            }
+        }
+        NameAction.R -> {
+            var numRotations = (action.num % 360) / 90
+            while (numRotations > 0) {
+                endWaypointPosition = rotateRight2(endWaypointPosition)
+                numRotations--
+            }
+        }
+        NameAction.F -> {
+            var numForward = action.num
+            while (numForward > 0) {
+                endShipPosition = Pair(
+                    waypointPosition.first + endShipPosition.first,
+                    waypointPosition.second + endShipPosition.second
+                )
+                numForward--
+            }
+        }
+        else -> endWaypointPosition =
+            moveInCardinalPos(action.name, action.num, waypointPosition)
+    }
+
+    return Pair(endShipPosition, endWaypointPosition)
 }
 
 fun stepMoveShip(
@@ -58,6 +109,14 @@ fun stepMoveShip(
             moveInCardinalPos(action.name, action.num, position)
     }
     return Pair(facingEnd, positionEnd)
+}
+
+private fun rotateLeft2(waypointPosition: Pair<Int, Int>): Pair<Int, Int> {
+    return Pair(-waypointPosition.second, waypointPosition.first)
+}
+
+private fun rotateRight2(waypointPosition: Pair<Int, Int>): Pair<Int, Int> {
+    return Pair(waypointPosition.second, -waypointPosition.first)
 }
 
 private fun rotateLeft(facing: NameAction): NameAction {
