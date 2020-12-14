@@ -25,7 +25,7 @@ fun solve11(scanner: Scanner): String {
         var current: Array<Array<Seat>>
         do {
             current = Array(grid.size) { grid[it].clone() }
-            transform(current, grid, nLines, nColumns)
+            transform2(current, grid, nLines, nColumns)
         } while (!current.contentDeepEquals(grid))
         val showGrid: String = grid.toPrintableString()
         println(showGrid)
@@ -61,6 +61,25 @@ fun transform(
     }
 }
 
+fun transform2(
+    grid: Array<Array<Seat>>,
+    endGrid: Array<Array<Seat>>,
+    nLines: Int,
+    nColumns: Int
+) {
+    for (i in grid.indices) {
+        for (j in grid[i].indices) {
+            if (endGrid[i][j] == Seat.FLOOR) continue
+            when (countNeighbours2(grid, i, j, nLines, nColumns)) {
+                0 -> endGrid[i][j] = Seat.OCCUPIED
+                1, 2, 3, 4 -> {
+                }
+                else -> endGrid[i][j] = Seat.EMPTY
+            }
+        }
+    }
+}
+
 fun countNeighbours(
     grid: Array<Array<Seat>>,
     i: Int,
@@ -80,6 +99,107 @@ fun countNeighbours(
         }
     }
     return sum
+}
+
+fun countNeighbours2(
+    grid: Array<Array<Seat>>,
+    i0: Int,
+    j0: Int,
+    nLines: Int,
+    nColumns: Int
+): Int {
+    var sum = 0
+    // dir top
+    t@ for (i in i0 - 1 downTo 0) {
+        when {
+            isFloor(i, j0, grid) -> continue@t
+            isOccupied(i, j0, grid) -> sum++
+        }
+        break@t
+    }
+    // dir bottom
+    b@ for (i in i0 + 1 until nLines) {
+        when {
+            isFloor(i, j0, grid) -> continue@b
+            isOccupied(i, j0, grid) -> sum++
+        }
+        break@b
+    }
+    // dir left
+    l@ for (j in j0 - 1 downTo 0) {
+        when {
+            isFloor(i0, j, grid) -> continue@l
+            isOccupied(i0, j, grid) -> sum++
+        }
+        break@l
+    }
+    // dir right
+    r@ for (j in j0 + 1 until nColumns) {
+        when {
+            isFloor(i0, j, grid) -> continue@r
+            isOccupied(i0, j, grid) -> sum++
+        }
+        break@r
+    }
+    val size = min(nLines, nColumns)
+    // dir TL
+    tl@ for (k in 1 until size) {
+        val i = i0 - k
+        val j = j0 - k
+        when {
+            !isLegal(i, j, nLines, nColumns) -> break@tl
+            isFloor(i, j, grid) -> continue@tl
+            isOccupied(i, j, grid) -> sum++
+        }
+        break@tl
+    }
+    // dir TR
+    tr@ for (k in 1 until size) {
+        val i = i0 - k
+        val j = j0 + k
+        when {
+            !isLegal(i, j, nLines, nColumns) -> break@tr
+            isFloor(i, j, grid) -> continue@tr
+            isOccupied(i, j, grid) -> sum++
+        }
+        break@tr
+    }
+    // dir BL
+    bl@ for (k in 1 until size) {
+        val i = i0 + k
+        val j = j0 - k
+        when {
+            !isLegal(i, j, nLines, nColumns) -> break@bl
+            isFloor(i, j, grid) -> continue@bl
+            isOccupied(i, j, grid) -> sum++
+        }
+        break@bl
+    }
+    // dir BR
+    br@ for (k in 1 until size) {
+        val i = i0 + k
+        val j = j0 + k
+        when {
+            !isLegal(i, j, nLines, nColumns) -> break@br
+            isFloor(i, j, grid) -> continue@br
+            isOccupied(i, j, grid) -> sum++
+        }
+        break@br
+    }
+
+    return sum
+}
+
+private fun isLegal(i: Int, j: Int, nLines: Int, nColumns: Int): Boolean {
+    return i >= 0 && j >= 0 && i < nLines && j < nColumns
+}
+
+private fun isFloor(i: Int, j: Int, grid: Array<Array<Seat>>): Boolean {
+    return grid[i][j] == Seat.FLOOR
+}
+
+private fun isOccupied(i: Int, j: Int, grid: Array<Array<Seat>>): Boolean {
+    return grid[i][j] == Seat.OCCUPIED
 }
 
 enum class Seat {
