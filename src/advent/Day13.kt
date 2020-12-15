@@ -1,15 +1,27 @@
 package advent
 
+import java.math.BigInteger
 import java.util.*
 
 fun solve13(scanner: Scanner): String {
     with(scanner) {
-        val earliest = nextLine().toInt()
+        nextLine()
         val buses = nextLine().split(",").toMutableList()
-            .apply { removeIf { it == "x" } }.map { it.toInt() }
+            .map { if (it == "x") null else it.toLong() }
 
-        return earliestResult(earliest, buses).toString()
+        return earliestResult2(buses).toString()
     }
+}
+
+fun earliestResult2(buses: List<Long?>): BigInteger {
+    // stopped at "100034027778737"
+    var timestamp = BigInteger("100000000000000", 10)
+    var satisfied: Boolean
+    do {
+        timestamp++
+        satisfied = satisfied(timestamp, buses)
+    } while (!satisfied)
+    return timestamp
 }
 
 fun earliestResult(earliest: Int, buses: List<Int>): Int {
@@ -25,4 +37,17 @@ fun earliestResult(earliest: Int, buses: List<Int>): Int {
         time++
     }
     return (time - earliest) * busId
+}
+
+fun satisfied(timestamp: BigInteger, buses: List<Long?>): Boolean {
+    var t = timestamp
+    for (id in buses) {
+        if (id != null) {
+            if (t.mod(BigInteger.valueOf(id)) != BigInteger.ZERO) {
+                return false
+            }
+        }
+        t++
+    }
+    return true
 }
