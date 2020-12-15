@@ -1,6 +1,8 @@
 package advent
 
+import java.math.BigInteger
 import java.util.*
+import kotlin.math.pow
 
 fun solve14(scanner: Scanner): String {
     with(scanner) {
@@ -29,28 +31,63 @@ fun solve14(scanner: Scanner): String {
                 )
             )
         }
-        return part1(valuesInMemory(maskAndMemories)).toString()
+        return sumPart2(valuesInMemory(maskAndMemories)).toString()
     }
 }
 
 fun valuesInMemory(
     maskAndMemory: List<MaskAndMemory>
-): Map<Int, Long> {
-    val addressToValue = mutableMapOf<Int, Long>()
+): Map<BigInteger, Long> {
+    val addressToValue = mutableMapOf<BigInteger, Long>()
     for (mAndMem in maskAndMemory) {
         val mask = maskToSparse(mAndMem.mask)
         for (m in mAndMem.memoryActions) {
-            addressToValue[m.address] = applyMask(m.value, mask)
+            val addresses: List<BigInteger> = applyMask2(m.address, mask)
+            for (a in addresses) {
+                addressToValue[a] = m.value.toLong()
+            }
         }
     }
     return addressToValue
+}
+
+fun applyMask2(address: Int, mask: Set<Pair<Int, Boolean>>): List<BigInteger> {
+    val binaryString =
+        StringBuilder(Integer.toBinaryString(address).padStart(36, '0'))
+    // change all 1 with 1
+    mask.filter { it.second }.forEach { binaryString[it.first] = '1' }
+    val res = mutableListOf<BigInteger>()
+    val floating = mask.filter { !it.second }.map { it.first }
+    // now floating bits
+    val switches: MutableList<Boolean> = MutableList(floating.size) { false }
+    var i = 0L
+    val maxI = 2.0.pow(floating.size).toLong()
+    while (i < maxI) {
+        incrementSwitchesCounter(i, switches)
+        floating.forEachIndexed { index, floatingIndex ->
+            binaryString[floatingIndex] =
+                if (switches[index]) '1' else '0'
+        }
+        res.add(BigInteger(binaryString.toString(), 2))
+        // increment switches
+        i++
+    }
+    return res
+}
+
+fun incrementSwitchesCounter(i: Long, switches: MutableList<Boolean>) {
+    val binaryString =
+        Integer.toBinaryString(i.toInt()).padStart(switches.size, '0')
+    for (index in binaryString.indices) {
+        switches[index] = binaryString[index] == '1'
+    }
 }
 
 fun maskToSparse(mask: String): Set<Pair<Int, Boolean>> =
     mask.foldIndexed(mutableSetOf()) { index, acc, c ->
         when (c) {
             '1' -> acc.add(Pair(index, true))
-            '0' -> acc.add(Pair(index, false))
+            'X' -> acc.add(Pair(index, false))
         }
         acc
     }
@@ -66,6 +103,10 @@ fun applyMask(value: Int, mask: Set<Pair<Int, Boolean>>): Long {
 
 fun part1(addressToValue: Map<Int, Long>): Long {
     return addressToValue.values.sum()
+}
+
+fun sumPart2(valuesInMemory: Map<BigInteger, Long>): Long {
+    return valuesInMemory.values.sum()
 }
 
 data class MemoryAction(val address: Int, val value: Int)
