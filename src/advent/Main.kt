@@ -9,8 +9,8 @@ import java.util.*
 
 fun main(args: Array<String>) {
     val debug: Boolean = false
-    val numDay = 13
-    val function = ::solve13
+    val numDay = 14
+    val function = ::solve14
     val startTime = System.currentTimeMillis()
     val scanner =
         Scanner(
