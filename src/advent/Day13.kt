@@ -14,8 +14,8 @@ fun solve13(scanner: Scanner): String {
 }
 
 fun earliestResult2(buses: List<Long?>): BigInteger {
-    // stopped at "100034027778737"
-    var timestamp = BigInteger("100000000000000", 10)
+    // stopped at "100074294665917"
+    var timestamp = BigInteger("100034027778737", 10)
     var satisfied: Boolean
     do {
         timestamp++
@@ -45,6 +45,10 @@ fun satisfied(timestamp: BigInteger, buses: List<Long?>): Boolean {
         if (id != null) {
             if (t.mod(BigInteger.valueOf(id)) != BigInteger.ZERO) {
                 return false
+            } else {
+                if(true) {
+
+                }
             }
         }
         t++

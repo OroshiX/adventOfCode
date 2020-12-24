@@ -68,3 +68,13 @@ data class MyNotes(
     val myTicket: List<Int>,
     val nearbyTickets: List<List<Int>>
 )
+
+fun departureFields2(notes: MyNotes): Int {
+    val departureValues = mutableListOf<Int>()
+    val validTickets = notes.nearbyTickets.filter { ticket ->
+        ticket.all { ticketValue -> notes.rules.any { it.isValid(ticketValue) } }
+    }.toMutableList().apply { add(notes.myTicket) } // including mine
+
+
+    return departureValues.fold(1) { acc, i -> acc * i }
+}
