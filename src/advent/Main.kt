@@ -7,8 +7,8 @@ import java.net.URL
 import java.util.*
 
 
-fun main(args: Array<String>) {
-    val debug: Boolean = false
+fun main() {
+    val debug = false
     val numDay = 16
     val function = ::solve16
     val startTime = System.currentTimeMillis()
