@@ -60,16 +60,12 @@ data class RulesTicket(
         val range1: IntRange,
         val range2: IntRange
 ) {
-    fun isValid(value: Int): Boolean {
-        return value in range1 || value in range2
-    }
+    fun isValid(value: Int) = value in range1 || value in range2
 }
 
-data class MyNotes(
-        val rules: List<RulesTicket>,
-        val myTicket: List<Int>,
-        val nearbyTickets: List<List<Int>>
-)
+data class MyNotes(val rules: List<RulesTicket>,
+                   val myTicket: List<Int>,
+                   val nearbyTickets: List<List<Int>>)
 
 fun departureFields2(notes: MyNotes): Long {
     val validTickets = notes.nearbyTickets.filter { ticket ->
@@ -78,19 +74,14 @@ fun departureFields2(notes: MyNotes): Long {
     val rules = notes.rules.toMutableList()
     val nbIndicesTicket = validTickets.first().indices
     val correspondanceMap = mutableMapOf<String, MutableList<Int>>()
-    for (r in rules) {
+    rules.forEach { r ->
         for (i in nbIndicesTicket) {
-            if (validTickets.all { r.isValid(it[i]) }) {
-                // ca correspond
-                val listIndices = correspondanceMap.getOrPut(r.field) { mutableListOf() }
-                listIndices.add(i)
-            }
+            // ca correspond?
+            if (validTickets.all { r.isValid(it[i]) }) correspondanceMap.getOrPut(r.field) { mutableListOf() }.apply { add(i) }
         }
     }
     val finalCorrespondance = mutableMapOf<String, Int>()
-    while (correspondanceMap.isNotEmpty()) {
-        rearrangeCorrespondances(correspondanceMap, finalCorrespondance)
-    }
+    while (correspondanceMap.isNotEmpty()) rearrangeCorrespondances(correspondanceMap, finalCorrespondance)
     val indicesToTake = finalCorrespondance.filterKeys { it.startsWith("departure") }.values
     return notes.myTicket.foldIndexed(1) { index, acc, i ->
         if (indicesToTake.contains(index)) acc * i else acc
