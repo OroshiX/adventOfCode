@@ -33,16 +33,16 @@ fun advanceSteps1(grid: List<List<CellState>>, steps: Int): Set<XYZ> {
     maxX = grid.first().size - 1
     maxY = grid.size - 1
     maxZ = 0
-
+    System.err.println("Step 0:\n${space3D.toPrintable()}\n\n")
     for (i in 1..steps) {
-        System.err.println(space3D.toPrintable())
-        space3D = step(space3D)
         minX--
         minY--
         minZ--
         maxX++
         maxY++
         maxZ++
+        space3D = step(space3D)
+        System.err.println("Step $i:\n${space3D.toPrintable()}\n\n")
     }
     return space3D
 }
@@ -61,7 +61,12 @@ fun step(grid: Set<XYZ>): Set<XYZ> {
                 val neighbours = getNeighboursInSpace3D(x, y, z, minX, maxX, minY, maxY, minZ, maxZ)
                 val count: Int = countActiveInGivenPositions(grid, neighbours)
                 val contains = grid.contains(XYZ(x, y, z))
-                val cellActive = (count == 2 || count == 3) && contains || (count == 3 && !contains)
+                val cellActive = when {
+                    contains && (count == 2 || count == 3) -> true
+                    contains -> false
+                    !contains && count == 3 -> true
+                    else -> false
+                }
                 if (cellActive) {
                     res += XYZ(x, y, z)
                     if (x < miniX) miniX = x

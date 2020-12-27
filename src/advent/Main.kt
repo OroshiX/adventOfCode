@@ -8,7 +8,7 @@ import java.util.*
 
 
 fun main() {
-    val debug = true
+    val debug = false
     val numDay = 17
     val function = ::solve17
     val startTime = System.currentTimeMillis()
