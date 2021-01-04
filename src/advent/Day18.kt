@@ -5,8 +5,10 @@ import java.util.*
 fun solve18(scanner: Scanner): String {
     with(scanner) {
         val operations = parseIntoListOfMath(nextLine())
-        val l = Multiply(Value(2), Add(Value(3), Multiply(Value(4), Value(5)))).value()
-        print(l)
+        val t = Add(
+            Multiply(Value(2), Value(3)), Multiply(Value(4), Value(5))
+        )
+        print(t.value())
         return operations.toString()
     }
 }
@@ -52,6 +54,9 @@ sealed class MathElement {
 
 data class Value(val value: Int) : MathElement() {
     override fun value(): Int = this.value
+    override fun toString(): String {
+        return value.toString()
+    }
 }
 
 data class Parenthesis(val inside: List<MathElement>)
@@ -60,8 +65,14 @@ sealed class BinaryOperation(val left: MathElement, val right: MathElement) : Ma
 
 class Multiply(left: MathElement, right: MathElement) : BinaryOperation(left, right) {
     override fun value(): Int = left.value() * right.value()
+    override fun toString(): String {
+        return "($left) * ($right)"
+    }
 }
 
 class Add(left: MathElement, right: MathElement) : BinaryOperation(left, right) {
     override fun value(): Int = left.value() + right.value()
+    override fun toString(): String {
+        return "($left) + ($right)"
+    }
 }

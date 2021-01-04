@@ -7,10 +7,10 @@ import java.net.URL
 import java.util.*
 
 
-fun main() {
+fun main(argv: Array<String>) {
     val debug = true
-    val numDay = 18
-    val function = ::solve18
+    val numDay = 19
+    val function = ::solve19
     val startTime = System.currentTimeMillis()
     val scanner =
         Scanner(

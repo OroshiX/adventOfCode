@@ -83,7 +83,7 @@ fun departureFields2(notes: MyNotes): Long {
     val finalCorrespondance = mutableMapOf<String, Int>()
     while (correspondanceMap.isNotEmpty()) rearrangeCorrespondances(correspondanceMap, finalCorrespondance)
     val indicesToTake = finalCorrespondance.filterKeys { it.startsWith("departure") }.values
-    return notes.myTicket.foldIndexed(1) { index, acc, i ->
+    return notes.myTicket.foldIndexed(1L) { index, acc, i ->
         if (indicesToTake.contains(index)) acc * i else acc
     }
 }
