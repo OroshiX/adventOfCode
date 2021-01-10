@@ -9,18 +9,19 @@ import java.util.*
 
 fun main(argv: Array<String>) {
     val debug = false
-    val numDay = 24
-    val function = ::solve24
+    val numDay = 25
+    val function = ::solve25
     val startTime = System.currentTimeMillis()
-    val scanner =
-        Scanner(
-            FileInputStream(
-                if (debug) "D:\\Documents\\Dev\\projects\\adventOfCode\\inputs\\t"
-                else saveFile(numDay)
-            )
+    val scanner = Scanner(
+        FileInputStream(
+            if (debug) "D:\\Documents\\Dev\\projects\\adventOfCode\\inputs\\t"
+            else saveFile(numDay)
         )
+    )
     val res = function.invoke(scanner)
-    System.err.println("Took ${(System.currentTimeMillis() - startTime) / 1000} s to execute")
+    System.err.println(
+        "Took ${(System.currentTimeMillis() - startTime) / 1000} s to execute"
+    )
     print(res)
 }
 
