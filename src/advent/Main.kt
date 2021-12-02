@@ -9,7 +9,7 @@ import java.util.*
 
 fun main() {
     val debug = false
-    val numDay = 2
+    val numDay = 3
     val year = 2021
     val function = ::solve2
     val startTime = System.currentTimeMillis()
@@ -35,10 +35,8 @@ fun saveFile(num: Int, year: Int): String {
         return path
     download(
         "https://adventofcode.com/$year/day/$num/input",
-        file,
-        "session=53616c7465645f5fa1a996be127cbd99cd1dc27cbc3d31c0dd516465e205c59eba292ccd6fdc6756f67bd0809a010c1d"
+        file, System.getenv("cookie")
     )
-    // session=53616c7465645f5fa1a996be127cbd99cd1dc27cbc3d31c0dd516465e205c59eba292ccd6fdc6756f67bd0809a010c1d
     return path
 }
 
