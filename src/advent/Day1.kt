@@ -9,7 +9,7 @@ fun solve1(scanner: Scanner): String {
             input.add(nextLine()!!.toInt())
         }
         println(input)
-        return findPart1(input).toString()
+        return findPart2(input).toString()
     }
 }
 
@@ -25,6 +25,14 @@ fun findPart1(list: List<Int>): Int {
     return res
 }
 
-fun findPart2(list: List<Int>): Int? {
-    TODO()
+fun findPart2(list: List<Int>): Int {
+    val currentSum = list[0]+list[1]+list[2]
+    var res = 0
+    for (i in 3 until list.size) {
+        val nextSum = currentSum - list[i - 3] + list[i]
+        if(nextSum > currentSum){
+            res++
+        }
+    }
+    return res
 }
