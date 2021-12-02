@@ -18,14 +18,17 @@ fun applyInstructions(instructions: List<String>): Int {
     return pos.multiply()
 }
 
-private data class Position(var horizontal: Int = 0, var vertical: Int = 0) {
-    fun applyMovement(instruction: String): Unit {
+private data class Position(var horizontal: Int = 0, var vertical: Int = 0, var aim: Int = 0) {
+    fun applyMovement(instruction: String) {
         val (dir, stepString) = instruction.split(" ")
         val step = stepString.toInt()
         when (dir) {
-            "forward" -> horizontal += step
-            "down" -> vertical += step
-            "up" -> vertical -= step
+            "forward" -> {
+                horizontal += step
+                vertical += aim * step
+            }
+            "down" -> aim += step
+            "up" -> aim -= step
         }
     }
 
