@@ -7,11 +7,11 @@ import java.net.URL
 import java.util.*
 
 
-fun main(argv: Array<String>) {
+fun main() {
     val debug = false
-    val numDay = 25
+    val numDay = 1
     val year = 2021
-    val function = ::solve25
+    val function = ::solve1
     val startTime = System.currentTimeMillis()
     val scanner = Scanner(
         FileInputStream(
@@ -36,7 +36,7 @@ fun saveFile(num: Int, year: Int): String {
     download(
         "https://adventofcode.com/$year/day/$num/input",
         file,
-        "_ga=GA1.2.433693440.1607594672; session=53616c7465645f5feede30b44515d84eff1fa01590e28e7a852092c6af3f5565c4a0d0502f843d5d054fa19a153919a1; _gid=GA1.2.1812765835.1607875133"
+        "session=53616c7465645f5fa1a996be127cbd99cd1dc27cbc3d31c0dd516465e205c59eba292ccd6fdc6756f67bd0809a010c1d"
     )
     // session=53616c7465645f5fa1a996be127cbd99cd1dc27cbc3d31c0dd516465e205c59eba292ccd6fdc6756f67bd0809a010c1d
     return path
