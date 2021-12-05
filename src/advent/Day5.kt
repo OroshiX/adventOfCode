@@ -16,15 +16,11 @@ fun solve5(scanner: Scanner): String {
 }
 
 private data class Grid(val lines: List<Line>) {
-    val sizeX: Int
-        get() = lines.maxOf { it.maxCoordX }
-    val sizeY: Int
-        get() = lines.maxOf { it.maxCoordY }
     val coverageMap: Map<Point, Int>
         get() {
             val res = mutableMapOf<Point, Int>()
             lines.forEach {
-                val covered = it.coveredPointsAxis
+                val covered = it.coveredPoints
                 for (cov in covered) {
                     res[cov] = res.getOrDefault(cov, 0) + 1
                 }
@@ -35,7 +31,11 @@ private data class Grid(val lines: List<Line>) {
         get() = coverageMap.filterValues { it >= 2 }.count()
 }
 
-private data class Point(val x: Int, val y: Int)
+private data class Point(val x: Int, val y: Int) {
+    override fun toString(): String {
+        return "($x,$y)"
+    }
+}
 
 private class Line(input: String) {
     val point1: Point
@@ -55,19 +55,34 @@ private class Line(input: String) {
         get() = point1.y == point2.y
     private val vertical: Boolean
         get() = point1.x == point2.x
-    val coveredPointsAxis: List<Point>
+    val coveredPoints: List<Point>
         get() {
             val res = mutableListOf<Point>()
             if (vertical) {
                 for (y in min(point1.y, point2.y)..maxCoordY) {
                     res += Point(point1.x, y)
                 }
-            }
-            if (horizontal) {
+            } else if (horizontal) {
                 for (x in min(point1.x, point2.x)..maxCoordX) {
                     res += Point(x, point1.y)
                 }
+            } else {
+                // diagonal
+                val progressionX: Int = if (point1.x < point2.x) 1 else -1
+                val progressionY: Int = if (point1.y < point2.y) 1 else -1
+                var current = point1.copy()
+                var i = 0
+                while (current != point2) {
+                    res += current
+                    i++
+                    current = Point(point1.x + progressionX * i, point1.y + progressionY * i)
+                }
+                res+= current
             }
             return res
         }
+
+    override fun toString(): String {
+        return "$point1 -> $point2: $coveredPoints"
+    }
 }
