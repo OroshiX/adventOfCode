@@ -8,10 +8,10 @@ import java.util.*
 
 
 fun main() {
-    val debug = true
-    val numDay = 3
+    val debug = false
+    val numDay = 5
     val year = 2021
-    val function = ::solve3
+    val function = ::solve5
     val startTime = System.currentTimeMillis()
     val scanner = Scanner(
         FileInputStream(
@@ -21,7 +21,7 @@ fun main() {
     )
     val res = function.invoke(scanner)
     System.err.println(
-        "Took ${(System.currentTimeMillis() - startTime) / 1000} s to execute"
+        "Took ${(System.currentTimeMillis() - startTime)} ms to execute"
     )
     print(res)
 }
