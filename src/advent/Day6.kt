@@ -13,16 +13,15 @@ fun solve6(scanner: Scanner): String {
     }
 }
 
-data class Fishes(val list: List<Int>) {
-    val fishToNumber: MutableMap<Int, Long> = mutableMapOf()
+private data class Fishes(val fishToNumber: MutableMap<Int, Long> = mutableMapOf()) {
 
-    constructor(line: String) : this(line.split(",").map { it.toInt() })
-
-    init {
+    constructor(list: List<Int>) : this() {
         for (f in list) {
             fishToNumber[f] = fishToNumber.getOrDefault(f, 0) + 1
         }
     }
+
+    constructor(line: String) : this(line.split(",").map { it.toInt() })
 
     private fun step() {
         val prec = fishToNumber[0] ?: 0
@@ -56,10 +55,10 @@ data class Fishes(val list: List<Int>) {
     }
 
     val size: Long
-        get() = fishToNumber.values.sumOf { it.toLong() }
+        get() = fishToNumber.values.sum()
 }
 
-fun Map<Int, Long>.trim(): Map<Int, Long> {
+private fun Map<Int, Long>.trim(): Map<Int, Long> {
     return this.filterValues { it != 0L }
 }
 
