@@ -10,7 +10,7 @@ fun solve7(scanner: Scanner): String {
     }
 }
 
-fun shortestPosition(crabs: List<Int>): Int {
+fun shortestPosition(crabs: List<Int>): Long {
     val sorted = crabs.sorted()
     val middle = sorted.size / 2
     val median =
@@ -22,7 +22,7 @@ fun shortestPosition(crabs: List<Int>): Int {
     return fuelMedian
 }
 
-fun shouldBeLess(crabs: List<Int>, than: Int): Int? {
+fun shouldBeLess(crabs: List<Int>, than: Int): Long? {
     var less = than
     var fuel = totalFuel(crabs, than)
 
@@ -38,7 +38,7 @@ fun shouldBeLess(crabs: List<Int>, than: Int): Int? {
     return fuel
 }
 
-fun shouldBeMore(crabs: List<Int>, than: Int): Int? {
+fun shouldBeMore(crabs: List<Int>, than: Int): Long? {
     var more = than
     var fuel = totalFuel(crabs, than)
     while (more <= crabs.last()) {
@@ -53,6 +53,18 @@ fun shouldBeMore(crabs: List<Int>, than: Int): Int? {
     return fuel
 }
 
-fun totalFuel(crabs: List<Int>, position: Int): Int {
-    return crabs.fold(0) { acc, i -> acc + abs(i - position) }
+fun totalFuel(crabs: List<Int>, position: Int): Long {
+    return crabs.fold(0L) { acc, i -> acc + stepsCost(abs(i - position)) }
 }
+
+fun stepsCost(nSteps: Int): Long {
+    if (nSteps < 0) throw IllegalArgumentException("Steps ($nSteps) should not be negative")
+
+    mapStepCosts[nSteps]?.let { return it }
+    val calculatedCost = (nSteps * (nSteps + 1)).toLong() / 2
+
+    mapStepCosts[nSteps] = calculatedCost
+    return calculatedCost
+}
+
+private val mapStepCosts = mutableMapOf<Int, Long>()
