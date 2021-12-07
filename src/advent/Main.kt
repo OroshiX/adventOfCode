@@ -9,9 +9,9 @@ import java.util.*
 
 fun main() {
     val debug = false
-    val numDay = 6
+    val numDay = 7
     val year = 2021
-    val function = ::solve6
+    val function = ::solve7
     val startTime = System.currentTimeMillis()
     val scanner = Scanner(
         FileInputStream(
