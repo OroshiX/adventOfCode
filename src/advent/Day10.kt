@@ -8,11 +8,44 @@ fun solve10(scanner: Scanner): String {
         while (hasNext()) {
             lines += nextLine()
         }
-        return lines.sumOf { it.illegalScore() }.toString()
+        val autoComplete = lines.map { it.autoComplete() }.toMutableList()
+        val res = autoComplete.filter { it != 0L }.sorted()
+        return res[res.size / 2].toString()
     }
 }
 
-fun String.illegalScore(): Long {
+private fun String.autoComplete(): Long {
+    val stack = Stack<Char>()
+    for (c in this) {
+        when (c) {
+            '(', '[', '{', '<' -> stack.push(c)
+            else -> {
+                if (stack.pop() != c.matchingOpen()) {
+                    return 0
+                }
+            }
+        }
+    }
+    var score = 0L
+    while (stack.isNotEmpty()) {
+        score *= 5
+        score += stack.pop().autoCompleteScore()
+    }
+    return score
+
+}
+
+private fun Char.autoCompleteScore(): Long {
+    return when (this) {
+        '(' -> 1
+        '[' -> 2
+        '{' -> 3
+        '<' -> 4
+        else -> throw  IllegalStateException()
+    }
+}
+
+private fun String.illegalScore(): Long {
     val stack = Stack<Char>()
     for (c in this) {
         when (c) {
@@ -27,7 +60,7 @@ fun String.illegalScore(): Long {
     return 0
 }
 
-fun Char.matchingOpen(): Char {
+private fun Char.matchingOpen(): Char {
     return when (this) {
         ')' -> '('
         ']' -> '['
@@ -37,7 +70,7 @@ fun Char.matchingOpen(): Char {
     }
 }
 
-fun Char.score(): Long {
+private fun Char.score(): Long {
     return when (this) {
         ')' -> 3
         ']' -> 57
