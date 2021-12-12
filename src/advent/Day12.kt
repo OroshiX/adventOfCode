@@ -13,49 +13,49 @@ fun solve12(scanner: Scanner): String {
         }
         val start = nodes.getValue("start")
         val end = nodes.getValue("end")
-        val paths = listAllPaths(start, end)
-        println(paths)
+
+        val graph = Graph(start)
+        val paths = graph.listAllPathsTo(end)
+        println(paths.joinToString("\n") { it })
         return paths.size.toString()
     }
 }
 
-private fun listAllPaths(start: Node, end: Node): List<String> {
+private data class Graph(val start: Node) {
     val visited = mutableSetOf<String>()
     val currentPath = mutableListOf<Node>()
-    val simplePaths = mutableListOf<MutableList<Node>>()
+    val simplePaths = mutableListOf<List<Node>>()
 
-    dfs(start, end, visited, currentPath, simplePaths)
-    return simplePaths.map { it.joinToString(",") { n -> n.name } }
-}
-
-private fun dfs(
-    start: Node,
-    end: Node,
-    visited: MutableSet<String>,
-    currentPath: MutableList<Node>,
-    simplePaths: MutableList<MutableList<Node>>
-) {
-    if (visited.contains(start.name)) return
-
-    // Mark current node
-    if (!start.isMultiple) {
-        visited.add(start.name)
+    fun listAllPathsTo(end: Node): List<String> {
+        visited.clear()
+        currentPath.clear()
+        simplePaths.clear()
+        dfs(start, end)
+        return simplePaths.map { it.joinToString("-") { n -> n.name } }
     }
-    currentPath.add(start)
-    if (start == end) {
-        simplePaths.add(currentPath)
-        visited.remove(start.name)
+
+    private fun dfs(start: Node, end: Node) {
+        if (visited.contains(start.name)) return
+
+        // Mark current node
+        if (!start.isMultiple) {
+            visited.add(start.name)
+        }
+        currentPath.add(start)
+        if (start == end) {
+            simplePaths.add(currentPath.toList())
+            visited.remove(start.name)
+            currentPath.removeLast()
+            return
+        }
+
+        // recur for all the neighbours
+        for (next in start.connections) {
+            dfs(next, end)
+        }
         currentPath.removeLast()
-        return
+        visited.remove(start.name)
     }
-
-    // recur for all the neighbours
-    for (next in start.connections) {
-        dfs(next, end, visited, currentPath, simplePaths)
-
-    }
-    currentPath.removeLast()
-    visited.remove(start.name)
 }
 
 
