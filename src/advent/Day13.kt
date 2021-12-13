@@ -25,7 +25,9 @@ ${printable(points)}
 
 """
         )
-        foldStep(points, folds.first())
+        for (fold in folds) {
+            foldStep(points, fold)
+        }
         println("Output:\n${printable(points)}")
         return points.size.toString()
     }
