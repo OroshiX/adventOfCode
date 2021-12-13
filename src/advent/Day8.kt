@@ -102,30 +102,15 @@ private data class Association(val posToChar: MutableMap<SegmentPosition, Set<Ch
         }
 
     constructor(input: List<String>) : this() {
-        unique(
-            twoLength = input.first { it.length == 2 },
-            threeLength = input.first { it.length == 3 },
-            fourLength = input.first { it.length == 4 },
-            sevenLength = input.first { it.length == 7 })
-        multiple(
-            input = input
-        )
+        compute(input)
     }
 
-    private fun unique(
-        twoLength: String,
-        fourLength: String,
-        threeLength: String,
-        sevenLength: String
-    ) {
-        val oneCf = twoLength.toSet()
-//        data[1] = oneCf.toSet()
-        val four = fourLength.toSet()
-//        data[4] = four.toSet()
-        val seven = threeLength.toSet()
-//        data[7] = seven.toSet()
-        val eight = sevenLength.toSet()
-//        data[8] = eight.toSet()
+    private fun compute(input: List<String>) {
+        // unique chars
+        val oneCf = input.first { it.length == 2 }.toSet()
+        val four = input.first { it.length == 4 }.toSet()
+        val seven = input.first { it.length == 3 }.toSet()
+        val eight = input.first { it.length == 7 }.toSet()
         posToChar[SegmentPosition.C] = oneCf.toSet()
         posToChar[SegmentPosition.F] = oneCf.toSet()
         posToChar[SegmentPosition.A] = seven.subtract(oneCf).toMutableSet()
@@ -135,9 +120,8 @@ private data class Association(val posToChar: MutableMap<SegmentPosition, Set<Ch
         val eg = eight.subtract(four).subtract(seven).toMutableSet()
         posToChar[SegmentPosition.E] = eg
         posToChar[SegmentPosition.G] = eg.toMutableSet()
-    }
 
-    private fun multiple(input: List<String>) {
+        // multiple chars
         val sixLength = input.filter { it.length == 6 }
         // d, e, or c missing
         // discriminate C and F positions
