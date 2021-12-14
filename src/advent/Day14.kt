@@ -11,27 +11,19 @@ fun solve14(scanner: Scanner):String {
             val (s,e) = nextLine().split(" -> ")
             rules[s] = e[0]
         }
-        val p = Polymer(polymer, rules)
+        val p = Polymer(polymer.toMutableList(), rules)
         p.step(10)
         print(p)
         return p.part1().toString()
     }    
 }
 
-data class Polymer(var polymer: String, val rules: Map<String,Char>) {
+data class Polymer(val polymer: MutableList<Char>, val rules: Map<String,Char>) {
     private fun step() {
-        val toAdd = mutableListOf<Char>()
-        for(i in 1 until polymer.length) {
-            toAdd+= rules.getValue(polymer.substring(i-1..i))
+        for(i in polymer.size - 1 downTo 1) {
+            val toAdd = rules.getValue("${polymer[i-1]}${polymer[i]}")
+            polymer.add(i, toAdd)
         }
-        val sb = StringBuilder()
-        for(i in 0 until polymer.length) {
-            sb.append(polymer[i])
-            if(i < polymer.length -1) {
-            	sb.append(toAdd[i])
-            }
-        }
-        polymer= sb.toString()
     }
     
     fun step(n: Int) {
