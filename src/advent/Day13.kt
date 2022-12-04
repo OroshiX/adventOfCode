@@ -2,8 +2,16 @@ package advent
 
 import java.util.*
 
-fun solve13(scanner: Scanner): String {
-    with(scanner) {
-       TODO()
+class Day13 : DayPuzzle<List<Int>>(13, true) {
+    override fun parse(scanner: Scanner): List<Int> {
+        TODO("Not yet implemented")
+    }
+
+    override fun solve1(input: List<Int>): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun solve2(input: List<Int>): String {
+        TODO("Not yet implemented")
     }
 }
