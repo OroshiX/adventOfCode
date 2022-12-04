@@ -8,8 +8,8 @@ import java.util.*
 
 
 fun main() {
-    val numDay = 3
-    val part = 2
+    val numDay = 4
+    val part = 1
     val year = 2022
     val day = getDayByNumber(numDay)
     val startTime = System.currentTimeMillis()
