@@ -2,8 +2,8 @@ package advent
 
 import java.util.*
 
-fun solve16(scanner: Scanner): String {
+fun solve21(scanner: Scanner) {
     with(scanner) {
-       TODO()
+        TODO()
     }
 }

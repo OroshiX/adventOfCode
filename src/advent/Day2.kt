@@ -4,33 +4,6 @@ import java.util.*
 
 fun solve2(scanner: Scanner): String {
     with(scanner) {
-        val instructions = mutableListOf<String>()
-        while (hasNext()) {
-            instructions.add(nextLine())
-        }
-        return applyInstructions(instructions).toString()
+       TODO()
     }
-}
-
-fun applyInstructions(instructions: List<String>): Int {
-    val pos = Position()
-    instructions.forEach { pos.applyMovement(it) }
-    return pos.multiply()
-}
-
-private data class Position(var horizontal: Int = 0, var vertical: Int = 0, var aim: Int = 0) {
-    fun applyMovement(instruction: String) {
-        val (dir, stepString) = instruction.split(" ")
-        val step = stepString.toInt()
-        when (dir) {
-            "forward" -> {
-                horizontal += step
-                vertical += aim * step
-            }
-            "down" -> aim += step
-            "up" -> aim -= step
-        }
-    }
-
-    fun multiply(): Int = horizontal * vertical
 }
