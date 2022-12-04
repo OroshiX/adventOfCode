@@ -24,6 +24,10 @@ class Day4 : DayPuzzle<List<Pair<IntRange, IntRange>>>(4, false) {
     }
 
     override fun solve2(input: List<Pair<IntRange, IntRange>>): String {
-        TODO("Not yet implemented")
+        return input.sumOf { pair ->
+            val res: Int = if (pair.first.toList().any { e -> pair.second.contains(e) } ||
+                pair.second.any { e -> pair.first.contains(e) }) 1 else 0
+            res
+        }.toString()
     }
 }
