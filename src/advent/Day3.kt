@@ -21,8 +21,26 @@ class Day3 : DayPuzzle<List<String>>(3, false) {
     }
 
     override fun solve2(input: List<String>): String {
-        TODO("Not yet implemented")
+        var prioritySum = 0
+        var group = mutableListOf<String>()
+        for (i in input.indices) {
+            group += input[i]
+            if (i % 3 == 2) {
+                val common = group.commonItem()
+                prioritySum += common.priority()
+                group = mutableListOf()
+            }
+        }
+        return prioritySum.toString()
     }
+}
+
+private fun List<String>.commonItem(): Char {
+    var common = first().toSet()
+    for (s in this) {
+        common = common.intersect(s.toSet())
+    }
+    return common.first()
 }
 
 private fun String.commonItem(): Char? {
