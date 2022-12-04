@@ -8,7 +8,7 @@ import java.util.*
 
 
 fun main() {
-    val numDay = 1
+    val numDay = 2
     val part = 1
     val year = 2022
     val day = getDayByNumber(numDay)
