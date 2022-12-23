@@ -39,7 +39,10 @@ class Day5 : DayPuzzle<Stacks>(5, false) {
     }
 
     override fun solve2(input: Stacks): String {
-        TODO("Not yet implemented")
+        for (action in input.moves) {
+            input.move2(action)
+        }
+        return input.topStacks()
     }
 }
 
@@ -52,6 +55,16 @@ data class Stacks(val stacks: Map<Int, Deque<String>>, val moves: List<MoveActio
     fun move(moveAction: MoveAction) {
         for (i in 1..moveAction.number) {
             move(moveAction.from, moveAction.to)
+        }
+    }
+
+    fun move2(moveAction: MoveAction) {
+        val popped = mutableListOf<String>()
+        for (i in 1..moveAction.number) {
+            popped += stacks.getValue(moveAction.from).pop()
+        }
+        for (pop in popped.reversed()) {
+            stacks.getValue(moveAction.to).push(pop)
         }
     }
 
