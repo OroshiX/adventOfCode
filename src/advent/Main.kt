@@ -10,7 +10,7 @@ import java.util.*
 
 fun main() {
     val numDay = 1
-    val year = 2022
+    val year = 2023
     val day = getDayByNumber(numDay)
     val startTime = System.currentTimeMillis()
     val scanner = Scanner(
