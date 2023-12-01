@@ -2,16 +2,21 @@ package advent
 
 import java.util.*
 
-sealed class DayPuzzle<T>(val numDay: Int, val debug: Boolean) {
-    fun solve(part: Int, scanner: Scanner): String {
+sealed class DayPuzzle<T>(val part: Part, val debug: Boolean) {
+    fun solve(scanner: Scanner): String {
         return when (part) {
-            1 -> solve1(parse(scanner))
-            2 -> solve2(parse(scanner))
-            else -> throw IllegalArgumentException("Part $part does not exist")
+            Part.ONE -> solve1(parse(scanner))
+            Part.TWO -> solve2(parse(scanner))
         }
     }
 
     abstract fun parse(scanner: Scanner): T
     abstract fun solve1(input: T): String
     abstract fun solve2(input: T): String
+    abstract fun expectedDebug1(): String
+    abstract fun expectedDebug2(): String
+}
+
+enum class Part {
+    ONE, TWO
 }

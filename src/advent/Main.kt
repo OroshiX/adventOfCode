@@ -4,26 +4,44 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.net.URL
+import java.nio.file.Paths
 import java.util.*
 
 
 fun main() {
     val numDay = 1
-    val part = 1
     val year = 2022
     val day = getDayByNumber(numDay)
     val startTime = System.currentTimeMillis()
     val scanner = Scanner(
         FileInputStream(
-            if (day.debug) "D:\\Documents\\Dev\\projects\\adventOfCode\\inputs\\t"
+            if (day.debug) fileDebug
             else saveFile(numDay, year)
         )
     )
-    val res = day.solve(part, scanner)
+    val res = day.solve(scanner)
     System.err.println(
         "Took ${(System.currentTimeMillis() - startTime)} ms to execute"
     )
-    println(res)
+    if (day.debug) {
+        val (resultOkay, expected) = when (day.part) {
+            Part.ONE -> (day.expectedDebug1() == res) to day.expectedDebug1()
+            Part.TWO -> (day.expectedDebug2() == res) to day.expectedDebug2()
+        }
+        println(if (resultOkay) "✅ Debug result is okay\n" else "❌ Expected $expected but got $res\n")
+    }
+    println("Result is:\n$res")
+}
+
+private val directory = File(Paths.get("").toAbsolutePath().toString(), "inputs").apply {
+    if (!exists())
+        mkdir()
+}
+private val fileDebug: File by lazy {
+    File(directory, "t").apply {
+        if (!exists())
+            createNewFile()
+    }
 }
 
 private fun getDayByNumber(num: Int): DayPuzzle<*> {
@@ -57,18 +75,16 @@ private fun getDayByNumber(num: Int): DayPuzzle<*> {
     }
 }
 
-fun saveFile(num: Int, year: Int): String {
-    val path =
-        "D:\\Documents\\Dev\\projects\\adventOfCode\\inputs\\inputDay$num.txt"
+fun saveFile(num: Int, year: Int): File {
+    val file = File(directory, "inputDay$num.txt")
 
-    val file = File(path)
     if (file.exists())
-        return path
+        return file
     download(
         "https://adventofcode.com/$year/day/$num/input",
         file, System.getenv("cookie")
     )
-    return path
+    return file
 }
 
 fun download(link: String, file: File, cookie: String) {

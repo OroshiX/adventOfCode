@@ -2,7 +2,7 @@ package advent
 
 import java.util.*
 
-class Day21 : DayPuzzle<List<Int>>(21, true) {
+class Day21 : DayPuzzle<List<Int>>(Part.ONE, true) {
     override fun parse(scanner: Scanner): List<Int> {
         TODO("Not yet implemented")
     }
@@ -12,6 +12,13 @@ class Day21 : DayPuzzle<List<Int>>(21, true) {
     }
 
     override fun solve2(input: List<Int>): String {
+        TODO("Not yet implemented")
+    }
+    override fun expectedDebug1(): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun expectedDebug2(): String {
         TODO("Not yet implemented")
     }
 }
