@@ -2,3 +2,5 @@
 out/
 inputs/
 adventOfCode.iml
+.gradle/
+build/
