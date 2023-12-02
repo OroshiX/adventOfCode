@@ -2,7 +2,7 @@ package advent
 
 import java.util.*
 
-class Day1 : DayPuzzle<List<String>>(Part.TWO, false) {
+class Day1 : DayPuzzle<List<String>>(Part.TWO, true) {
     override fun parse(scanner: Scanner): List<String> {
         val list = mutableListOf<String>()
         while (scanner.hasNextLine()) {
@@ -34,7 +34,8 @@ class Day1 : DayPuzzle<List<String>>(Part.TWO, false) {
             ?: throw IllegalArgumentException("Input $input doesn't have digits")
         val lastDigit = inverseGroupDigits.find(input.reversed())?.groupValues?.get(1)
             ?: throw IllegalArgumentException("Input ${input.reversed()} doesn't have digits")
-        return (mapDigits.getValue(firstDigit).toString() + mapDigits.getValue(lastDigit.reversed()).toString())
+        return (mapDigits.getValue(firstDigit).toString() + mapDigits.getValue(lastDigit.reversed())
+            .toString())
             .toLong()
     }
 
@@ -69,18 +70,16 @@ private val mapDigits = mapOf(
 private val regexDigits by lazy {
     val iterator = mapDigits.iterator()
     buildString {
-        append("(")
         append(iterator.next().key)
         while (iterator.hasNext()) {
             append("|")
             append(iterator.next().key)
         }
-        append(")")
     }
 }
 private val regexGroupDigits by lazy {
-    regexDigits.toRegex()
+    "($regexDigits)".toRegex()
 }
 private val inverseGroupDigits by lazy {
-    regexDigits.reversed().toRegex()
+    "(${regexDigits.reversed()})".toRegex()
 }
