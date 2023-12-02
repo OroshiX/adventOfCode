@@ -2,7 +2,7 @@ package advent
 
 import java.util.*
 
-sealed class DayPuzzle<T>(val part: Part, val debug: Boolean) {
+abstract class DayPuzzle<T>(val part: Part, val debug: Boolean) {
     fun solve(scanner: Scanner): String {
         return when (part) {
             Part.ONE -> solve1(parse(scanner))

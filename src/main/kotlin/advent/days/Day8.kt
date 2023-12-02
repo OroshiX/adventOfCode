@@ -1,5 +1,7 @@
-package advent
+package advent.days
 
+import advent.DayPuzzle
+import advent.Part
 import java.util.*
 
 class Day8 : DayPuzzle<List<Int>>(Part.ONE, true) {

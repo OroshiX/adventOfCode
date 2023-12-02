@@ -1,5 +1,6 @@
 package advent
 
+import advent.days.*
 import com.github.ajalt.mordant.animation.textAnimation
 import com.github.ajalt.mordant.rendering.TextColors
 import com.github.ajalt.mordant.rendering.TextColors.*

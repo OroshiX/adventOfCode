@@ -1,8 +1,10 @@
-package advent
+package advent.days
 
+import advent.DayPuzzle
+import advent.Part
 import java.util.*
 
-class Day17 : DayPuzzle<List<Int>>(Part.ONE, true) {
+class Day16 : DayPuzzle<List<Int>>(Part.ONE, true) {
     override fun parse(scanner: Scanner): List<Int> {
         TODO("Not yet implemented")
     }
