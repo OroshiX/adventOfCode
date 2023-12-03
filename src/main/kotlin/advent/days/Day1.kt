@@ -1,10 +1,9 @@
 package advent.days
 
 import advent.DayPuzzle
-import advent.Part
 import java.util.*
 
-class Day1 : DayPuzzle<List<String>>(Part.TWO, true) {
+class Day1 : DayPuzzle<List<String>>() {
     override fun parse(scanner: Scanner): List<String> {
         val list = mutableListOf<String>()
         while (scanner.hasNextLine()) {

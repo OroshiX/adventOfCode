@@ -59,7 +59,7 @@ fun main() = runBlocking {
     }
 
     val startTime = System.currentTimeMillis()
-    val res = day.solve(scanner)
+    val res = day.solve(scanner, part)
     val elapsedTime = System.currentTimeMillis() - startTime
     if (debug) {
         val expected = Config.getExpectedResult(numDay, part)

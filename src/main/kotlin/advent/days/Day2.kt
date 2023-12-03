@@ -1,10 +1,9 @@
 package advent.days
 
 import advent.DayPuzzle
-import advent.Part
 import java.util.*
 
-class Day2 : DayPuzzle<List<GameDay2>>(Part.TWO, false) {
+class Day2 : DayPuzzle<List<GameDay2>>() {
     override fun parse(scanner: Scanner): List<GameDay2> {
         val games = mutableListOf<GameDay2>()
         val regexBlue = Regex("""(\d+) blue""")
