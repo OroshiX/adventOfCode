@@ -6,8 +6,6 @@ import com.github.ajalt.mordant.rendering.TextColors
 import com.github.ajalt.mordant.rendering.TextColors.*
 import com.github.ajalt.mordant.rendering.TextStyles.bold
 import com.github.ajalt.mordant.rendering.TextStyles.underline
-import com.github.ajalt.mordant.terminal.ConversionResult
-import com.github.ajalt.mordant.terminal.StringPrompt
 import com.github.ajalt.mordant.terminal.Terminal
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -20,24 +18,26 @@ import java.nio.file.Paths
 import java.util.*
 
 
-const val numDay = 1
+//const val numDay = 1
 const val year = 2023
 val terminal = Terminal()
 fun main() = runBlocking {
-    val day = getDayByNumber(numDay)
-
     val title = """
         ❄️❄️❄️🌟❄️❄️❄️🌟❄️❄️❄️
         ${(green on black)("\uD83C\uDF84 Advent of Code $year \uD83C\uDF84")}
         ❄️❄️❄️🌟❄️❄️❄️🌟❄️❄️❄️
         
-        Solving ${(bold + brightRed + underline)("Day $numDay part ${day.part.number}")}
         """.trimIndent()
     terminal.println("\n" + title)
 
+    // Prompt user to get the day to solve and the part
+    val (numDay, part, debug) = Config.promptAllSet()
+
+    val day = getDayByNumber(numDay)
+
     val scanner = Scanner(
         FileInputStream(
-            if (day.debug) fileDebug(day.part)
+            if (debug) fileDebug(numDay, part)
             else saveFile(numDay, year)
         )
     )
@@ -57,11 +57,12 @@ fun main() = runBlocking {
             delay(50)
         }
     }
+
     val startTime = System.currentTimeMillis()
     val res = day.solve(scanner)
     val elapsedTime = System.currentTimeMillis() - startTime
-    if (day.debug) {
-        val expected = expectedResult(day.part)
+    if (debug) {
+        val expected = Config.getExpectedResult(numDay, part)
         if (expected == res) {
             terminal.success("✅ Debug result is okay")
         } else {
@@ -78,7 +79,7 @@ private val directory = File(Paths.get("").toAbsolutePath().toString(), "inputs"
     if (!exists()) mkdir()
 }
 
-private fun fileDebug(part: Part): File {
+private fun fileDebug(numDay: Int, part: Part): File {
     val file = File(directory, "t$numDay-${part.key}")
     if (file.exists()) return file
     file.createNewFile()
@@ -94,15 +95,6 @@ private fun fileDebug(part: Part): File {
         it.write(lines.joinToString("\n").toByteArray(Charsets.UTF_8))
     }
     return file
-}
-
-private fun expectedResult(part: Part): String {
-    val key = "expected.$numDay.${part.key}"
-    return PropertiesReader.getProperty(key).orEmpty().ifBlank {
-        val expected = StringPrompt("expectedResult", terminal, allowBlank = false).ask().orEmpty()
-        PropertiesReader.setProperty(key, expected)
-        expected
-    }
 }
 
 @Suppress("SameParameterValue")
@@ -140,24 +132,7 @@ fun saveFile(num: Int, year: Int): File {
 
     if (file.exists()) return file
 
-    val sessionCookie = PropertiesReader.getProperty("session")
-
-    val cookie = sessionCookie.orEmpty().ifBlank {
-        val prompt = terminal.prompt("""
-                    No property named "session" in file ${(black on blue)("inputs > config.properties")}.
-                    Please get the value from your browser when accessing advent of code website by inspecting the webpage on ${
-            (black on blue)(
-                "chrome > Application > Cookies"
-            )
-        }, and paste the value here of the cookie named ${(black on blue)("session")}""".trimIndent(),
-            promptSuffix = ":\n",
-            convert = {
-                if (it.isBlank()) ConversionResult.Invalid("Please enter a value for the session cookie")
-                else ConversionResult.Valid(it)
-            }).orEmpty()
-        PropertiesReader.setProperty("session", prompt)
-        prompt
-    }
+    val cookie = Config.getSessionCookie()
 
     download(
         "https://adventofcode.com/$year/day/$num/input",
@@ -177,25 +152,3 @@ fun download(link: String, file: File, cookie: String) {
     }
 }
 
-
-private const val CONFIG = "config.properties"
-
-object PropertiesReader {
-    private val properties = Properties()
-    private val file: File = File(directory, CONFIG)
-
-    init {
-        if (!file.exists()) file.createNewFile()
-        FileInputStream(file).use {
-            properties.load(it)
-        }
-    }
-
-    fun getProperty(key: String): String? = properties.getProperty(key)
-    fun setProperty(key: String, value: String) {
-        properties.setProperty(key, value)
-        FileOutputStream(file).use {
-            properties.store(it, "Cookies")
-        }
-    }
-}
