@@ -37,30 +37,36 @@ class Day8 : DayPuzzle<Graph>() {
     }
 
     override fun solve2(input: Graph): String {
+        val optimized = optimizeInit(input)
         var nbSteps = 0
-        var nodes = input.nodes.keys.filter { it.endsWith("A") }
-        val instructions = input.path
+        val nodes = optimized.startNodes.map { it to false }.toMutableList()
+
+        val instructions = if (optimized.isStartLeft) optimized.path else (listOf(0) + optimized.path)
         var indexInstructions = 0
-        var endCondition: Boolean
+        var l: Int
         do {
-            val currentInstruction = instructions[indexInstructions]
-            endCondition = true
-            nodes = nodes.map {
-                val next = input.nodes.getValue(it)
-                when (currentInstruction) {
-                    Instruction.LEFT -> {
-                        if (!next.first.endsWith('Z')) endCondition = false
-                        next.first
-                    }
-                    Instruction.RIGHT -> {
-                        if (!next.second.endsWith('Z')) endCondition = false
-                        next.second
-                    }
+            // left loop
+            l = instructions[indexInstructions]
+            repeat(l) {
+                nbSteps++
+                for (i in nodes.indices) {
+                    nodes[i] = optimized.nodes.getValue(nodes[i].first).first
                 }
+                if (nodes.all { it.second }) return nbSteps.toString()
             }
             indexInstructions = (indexInstructions + 1) % instructions.size
-            nbSteps++
-        } while (!endCondition)
+
+            // right loop
+            l = instructions[indexInstructions]
+            repeat(l) {
+                nbSteps++
+                for (i in nodes.indices) {
+                    nodes[i] = optimized.nodes.getValue(nodes[i].first).second
+                }
+                if (nodes.all { it.second }) return nbSteps.toString()
+            }
+            indexInstructions = (indexInstructions + 1) % instructions.size
+        } while (true)
 
         return nbSteps.toString()
     }
@@ -70,4 +76,42 @@ class Day8 : DayPuzzle<Graph>() {
 data class Graph(val path: List<Instruction>, val nodes: Map<String, Pair<String, String>>)
 enum class Instruction {
     LEFT, RIGHT
+}
+
+data class OptimizedGraph(
+    val path: List<Int>,
+    val isStartLeft: Boolean,
+    val nodes: Map<Short, Pair<Pair<Short, Boolean>, Pair<Short, Boolean>>>,
+    val startNodes: Set<Short>,
+)
+
+private fun optimizeInit(input: Graph): OptimizedGraph {
+    // Optimized path is the number of times we go left or right in a row
+    val optimizedPath = mutableListOf<Int>()
+    val startDirection = input.path.first()
+    var currentInstruction = startDirection
+    var currentCount = 1
+    for (i in 1 until input.path.size) {
+        val instruction = input.path[i]
+        if (instruction == currentInstruction) {
+            currentCount++
+        } else {
+            optimizedPath += currentCount
+            currentCount = 1
+            currentInstruction = instruction
+        }
+    }
+    optimizedPath += currentCount
+
+    val allNodes = input.nodes.keys.mapIndexed { index, key -> key to index.toShort() }.toMap()
+    val optimizedNodes = mutableMapOf<Short, Pair<Pair<Short, Boolean>, Pair<Short, Boolean>>>()
+    for (node in input.nodes) {
+        val (left, right) = node.value
+        optimizedNodes[allNodes.getValue(node.key)] =
+            Pair(allNodes.getValue(left) to left.endsWith('Z'), allNodes.getValue(right) to right.endsWith('Z'))
+    }
+    val startNodes = input.nodes.keys.filter { it.endsWith("A") }.map { allNodes.getValue(it) }
+    return OptimizedGraph(
+        optimizedPath, startDirection == Instruction.LEFT, optimizedNodes, startNodes.toSet(),
+    )
 }
