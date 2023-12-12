@@ -1,6 +1,7 @@
 package advent.days
 
 import advent.DayPuzzle
+import advent.Position
 import java.util.*
 
 class Day10 : DayPuzzle<MatrixGraph>() {
@@ -77,8 +78,6 @@ data class MatrixGraph(val matrix: List<List<Boolean>>, val start: Int) {
         return result
     }
 }
-
-data class Position(val i: Int, val j: Int)
 
 private fun Int.toPosition(colSize: Int): Position {
     return Position(this / colSize, this % colSize)
