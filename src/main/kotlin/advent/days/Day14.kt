@@ -31,7 +31,9 @@ class Day14 : DayPuzzle<GroundMap>() {
     }
 
     override fun solve2(input: GroundMap): String {
-        TODO("Not yet implemented")
+        println(input.printable())
+        input.rollCycles(1_000_000_000)
+        return input.calculateWeight().toString()
     }
 
 }
@@ -102,12 +104,31 @@ data class GroundMap(val grid: List<List<GroundType>>, val rollingStones: StoneP
         row.joinToString("") { it.char.toString() }
     }
 
-    fun rollNorth() {
+    fun rollNorth(north: Boolean = true) {
         val newStones = StonePositions(mutableMapOf())
         for ((j, areas) in verticalAreas.withIndex()) {
             for (area in areas) {
                 val numberStonesInArea = rollingStones.countStonesInVerticalArea(area, j = j)
-                newStones.addFromNorth(j = j, start = area.start, numberStones = numberStonesInArea)
+                if (north) {
+                    newStones.addFromNorth(j = j, start = area.start, numberStones = numberStonesInArea)
+                } else {
+                    newStones.addFromSouth(j = j, start = area.end, numberStones = numberStonesInArea)
+                }
+            }
+        }
+        rollingStones.replaceAll(newStones)
+    }
+
+    private fun rollWest(west: Boolean = true) {
+        val newStones = StonePositions(mutableMapOf())
+        for ((i, areas) in horizontalAreas.withIndex()) {
+            for (area in areas) {
+                val numberStonesInArea = rollingStones.countStonesInHorizontalArea(area, i = i)
+                if (west) {
+                    newStones.addFromWest(i = i, start = area.start, numberStones = numberStonesInArea)
+                } else {
+                    newStones.addFromEast(i = i, start = area.end, numberStones = numberStonesInArea)
+                }
             }
         }
         rollingStones.replaceAll(newStones)
@@ -120,6 +141,16 @@ data class GroundMap(val grid: List<List<GroundType>>, val rollingStones: StoneP
         }
         return weight
     }
+
+    fun rollCycles(nbCycles: Int) {
+        for (i in 1..nbCycles) {
+            rollNorth()
+            rollWest()
+            rollNorth(north = false)
+            rollWest(west = false)
+        }
+    }
+
 }
 
 data class StonePositions(val stones: MutableMap<Int, MutableSet<Int>>) {
