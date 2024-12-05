@@ -24,6 +24,11 @@ class Day1 : DayPuzzle<Pair<List<Int>, List<Int>>>() {
     }
 
     override fun solve2(input: Pair<List<Int>, List<Int>>): String {
-        TODO()
+        val similarity = mutableMapOf<Int, Int>()
+        var sum = 0
+        for (i in input.first) {
+            sum += similarity.getOrPut(i) { input.second.count { it == i } } * i
+        }
+        return sum.toString()
     }
 }
