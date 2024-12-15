@@ -53,7 +53,25 @@ class Day6 : DayPuzzle<Grid>() {
     }
 
     override fun solve2(input: Grid): String {
-        TODO()
+        input.moveGuard()
+        var nbLoops = 0
+        val obstaclesPositions = mutableSetOf<Position>()
+        for (visited in input.visited) {
+            // Get the next position of the guard
+            val nextPosition = visited.move()
+            val newGrid = input.newGridWithObstacleAt(nextPosition, obstaclesPositions) ?: continue
+
+            newGrid.moveGuard()
+            if (newGrid.isLoop) {
+                nbLoops++
+                if (nbLoops % 100 == 0) {
+                    println("Loop $nbLoops detected: \n")
+                    println(newGrid)
+                    println()
+                }
+            }
+        }
+        return nbLoops.toString()
     }
 }
 
@@ -74,10 +92,12 @@ private val Direction.symbol: Char
 data class Grid(
     var guard: Pair<Position, Direction>,
     val terrain: List<List<Terrain>>,
-    val visited: MutableSet<Pair<Position, Direction>> = mutableSetOf()
+    val visited: MutableSet<Pair<Position, Direction>> = mutableSetOf(),
+    val newObstacle: Position? = null,
 ) {
     private val nbLines = terrain.size
     private val nbCols = terrain[0].size
+    var isLoop = false
 
     private fun Position.isInBounds(): Boolean {
         return i in 0 until nbLines && j in 0 until nbCols
@@ -86,7 +106,7 @@ data class Grid(
     fun moveGuard() {
         var position: Position
         visited.add(guard)
-        while (true) {
+        while (!isLoop) {
             position = guard.move()
 
             if (!position.isInBounds()) {
@@ -102,9 +122,39 @@ data class Grid(
                     guard.first to guard.second.next()
                 }
             }
-            visited.add(guard)
+            isLoop = !visited.add(guard)
         }
         // End of the grid
+    }
+
+    fun newGridWithObstacleAt(
+        newObstacle: Position,
+        previousObstacles: MutableSet<Position>
+    ): Grid? {
+        val guardFirstPosition = visited.first()
+        // Skip the first position of the guard
+        if (newObstacle == guardFirstPosition.first || previousObstacles.contains(newObstacle)) {
+            return null
+        }
+        val newGrid = Grid(
+            terrain = terrain.mapIndexed { i, row ->
+                row.mapIndexed { j, terrain ->
+                    if (Position(i, j) == newObstacle) {
+                        Terrain.OBSTACLE
+                    } else {
+                        terrain
+                    }
+                }
+            },
+            guard = guardFirstPosition,
+            visited = mutableSetOf(),
+            newObstacle = newObstacle
+        )
+        if (newGrid.terrain == terrain) {
+            return null
+        }
+        previousObstacles.add(newObstacle)
+        return newGrid
     }
 
     override fun toString(): String {
@@ -112,14 +162,16 @@ data class Grid(
         for (i in terrain.indices) {
             for (j in terrain[i].indices) {
                 val position = Position(i, j)
-                if (position == guard.first) {
+                if (position == newObstacle) {
+                    builder.append('O')
+                } else if (position == guard.first) {
                     builder.append(guard.second.symbol)
                 } else if (visited.map { it.first }.contains(position)) {
                     visited.filter { it.first == position }.map { it.second }.distinct().let {
                         if (it.none { d -> d == Direction.UP || d == Direction.DOWN }) {
-                            builder.append("|")
-                        } else if (it.none { d -> d == Direction.LEFT || d == Direction.RIGHT }) {
                             builder.append("-")
+                        } else if (it.none { d -> d == Direction.LEFT || d == Direction.RIGHT }) {
+                            builder.append("|")
                         } else {
                             builder.append('+')
                         }
