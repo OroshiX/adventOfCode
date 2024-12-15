@@ -23,7 +23,7 @@ class Day7 : DayPuzzle<List<Operation>>() {
     override fun solve1(input: List<Operation>): String {
         var sum = 0L
         for (operation in input) {
-            val solutions = operation.numberOfSolutions()
+            val solutions = operation.numberOfSolutions(part1 = true)
             if (solutions >= 1) {
                 sum += operation.expected
             }
@@ -32,18 +32,29 @@ class Day7 : DayPuzzle<List<Operation>>() {
     }
 
     override fun solve2(input: List<Operation>): String {
-        TODO()
+        var sum = 0L
+        for (operation in input) {
+            val solutions = operation.numberOfSolutions(part1 = false)
+            if (solutions >= 1) {
+                sum += operation.expected
+            }
+        }
+        return sum.toString()
     }
 }
 
 data class Operation(val expected: Long, val numbers: List<Long>) {
-    fun numberOfSolutions(): Int {
+    fun numberOfSolutions(part1: Boolean): Int {
         var sum = 0
         val size = numbers.size - 1
-        val numberOfPossible = 2.0.pow(size).toInt()
+        val numberOfPossible = (if (part1) 2.0 else 3.0).pow(size).toInt()
         for (i in 0 until numberOfPossible) {
-            val combination = i.toString(2).padStart(size, '0').map {
-                if (it == '0') OperationType.ADDITION else OperationType.MULTIPLICATION
+            val combination = i.toString(if (part1) 2 else 3).padStart(size, '0').map {
+                when (it) {
+                    '0' -> OperationType.ADDITION
+                    '1' -> OperationType.MULTIPLICATION
+                    else -> OperationType.CONCATENATION
+                }
             }
             if (isCorrect(combination)) {
                 sum++
@@ -60,6 +71,7 @@ data class Operation(val expected: Long, val numbers: List<Long>) {
             when (operator) {
                 OperationType.ADDITION -> result += number
                 OperationType.MULTIPLICATION -> result *= number
+                OperationType.CONCATENATION -> result = (result.toString() + number).toLong()
             }
         }
         return result == expected
@@ -67,5 +79,5 @@ data class Operation(val expected: Long, val numbers: List<Long>) {
 }
 
 enum class OperationType {
-    ADDITION, MULTIPLICATION
+    ADDITION, MULTIPLICATION, CONCATENATION
 }
