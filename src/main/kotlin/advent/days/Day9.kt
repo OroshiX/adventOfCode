@@ -43,16 +43,16 @@ class Day9 : DayPuzzle<Disk>() {
     }
 
     override fun solve2(input: Disk): String {
-        TODO()
+        return input.checkSum(input.compactDisk2).toString()
     }
 }
 
-sealed class DiskElement(open val position: Int, open val size: Int, val occupied: Boolean)
+sealed class DiskElement(open val position: Int, open val size: Int)
 data class DiskSpace(val id: Int, override val position: Int, override val size: Int) :
-    DiskElement(position, size, true)
+    DiskElement(position, size)
 
 data class DiskEmpty(override val position: Int, override val size: Int) :
-    DiskElement(position, size, false)
+    DiskElement(position, size)
 
 data class Disk(val diskSpaces: List<DiskElement>) {
     val compactDisk: List<Long>
@@ -80,6 +80,67 @@ data class Disk(val diskSpaces: List<DiskElement>) {
             return allSpaces.filterNotNull()
         }
 
+
+    val compactDisk2: List<Long?>
+        get() {
+            var allSpaces = diskSpaces.flatMap { diskElement ->
+                if (diskElement is DiskSpace) {
+                    List(diskElement.size) { diskElement.id.toLong() }
+                } else {
+                    List(diskElement.size) { null }
+                }
+            }.toMutableList()
+            val emptySpaces = diskSpaces.filterIsInstance<DiskEmpty>().toMutableList()
+            val toMoveList = diskSpaces.filterIsInstance<DiskSpace>().reversed().toMutableList()
+
+            for (toMove in toMoveList) {
+                if (emptySpaces.isEmpty()) {
+                    break
+                }
+                var indexEmpty = 0
+                var empty: DiskEmpty = emptySpaces[indexEmpty]
+                while (indexEmpty < emptySpaces.size) {
+                    empty = emptySpaces[indexEmpty]
+                    if (empty.size >= toMove.size) {
+                        break
+                    }
+                    indexEmpty++
+                }
+                if (toMove.size <= empty.size && toMove.position > empty.position) {
+                    // Move toMove to empty
+                    for (i in 0 until toMove.size) {
+                        val element = allSpaces[toMove.position + i]
+                        allSpaces[empty.position + i] = element
+                        allSpaces[toMove.position + i] = null
+                    }
+
+                    allSpaces.lastPortionNullIndex().let {
+                        if (it != -1) {
+                            allSpaces = allSpaces.dropLast(allSpaces.size - it).toMutableList()
+                        }
+                    }
+                    empty = DiskEmpty(empty.position + toMove.size, empty.size - toMove.size)
+                    if (empty.size > 0) {
+                        emptySpaces[indexEmpty] = empty
+                    } else {
+                        emptySpaces.removeAt(indexEmpty)
+                    }
+                }
+            }
+            println(allSpaces.prettyPrint())
+            return allSpaces
+        }
+
+    fun List<Long?>.prettyPrint(): String {
+        return joinToString("") {
+            if (it == null) {
+                return@joinToString "."
+            }
+            val id = it % 222
+            (48 + id).toInt().toChar().toString()
+        }
+    }
+
     private fun List<Long?>.lastPortionNullIndex(): Int {
         var res = -1
         for (i in size - 1 downTo 0) {
@@ -100,7 +161,10 @@ data class Disk(val diskSpaces: List<DiskElement>) {
     override fun toString(): String {
         return diskSpaces.joinToString("") {
             if (it is DiskSpace) {
-                it.id.toString()
+                // Get the char of the id
+                // Only loop from 32 to 126 character code with modulo
+                val id = it.id % 95
+                (32 + id).toChar().toString()
             } else {
                 "."
             }.repeat(it.size)
