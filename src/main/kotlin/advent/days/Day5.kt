@@ -30,7 +30,7 @@ class Day5 : DayPuzzle<SafetyManual>() {
     }
 
     override fun solve2(input: SafetyManual): String {
-        TODO()
+        return input.solve2().toString()
     }
 }
 
@@ -38,17 +38,42 @@ data class SafetyManual(val orderingRules: Map<Int, Ordering>, val updates: List
     fun solve1(): Int {
         var sum = 0
         for (i in updates.indices) {
-            if (isCorrectOrder(i)) {
-                val median = updates[i].size / 2
-                sum += updates[i][median]
+            val update = updates[i]
+            if (isCorrectOrder(update)) {
+                val median = update.size / 2
+                sum += update[median]
             }
         }
         return sum
     }
 
-    private fun isCorrectOrder(index: Int): Boolean {
-        val update = updates[index]
+    fun solve2(): Int {
+        var sum = 0
+        for (i in updates.indices) {
+            val update =
+                updates[i].takeIf { !isCorrectOrder(it) }?.sortWithRule(orderingRules) ?: continue
 
+            val median = update.size / 2
+            sum += update[median]
+        }
+        return sum
+    }
+
+    private fun List<Int>.sortWithRule(orderingRules: Map<Int, Ordering>): List<Int> {
+        val sorted = this.toMutableList()
+        sorted.sortWith(comparator = Comparator { a, b ->
+            val ordering = orderingRules[a] ?: return@Comparator 0
+
+            if (ordering.afterOk(b)) {
+                -1
+            } else {
+                1
+            }
+        })
+        return sorted
+    }
+
+    private fun isCorrectOrder(update: List<Int>): Boolean {
         before@ for (i in update.indices) {
             for (j in i + 1 until update.size) {
                 val before = update[i]
@@ -64,10 +89,6 @@ data class SafetyManual(val orderingRules: Map<Int, Ordering>, val updates: List
 }
 
 data class Ordering(val before: Set<Int>, val after: Set<Int>) {
-    fun beforeOk(other: Int): Boolean {
-        return before.contains(other) || !after.contains(other)
-    }
-
     fun afterOk(other: Int): Boolean {
         return after.contains(other) || !before.contains(other)
     }
