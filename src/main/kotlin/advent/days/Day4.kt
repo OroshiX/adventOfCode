@@ -69,10 +69,6 @@ fun List<String>.isStart(i: Int, j: Int, direction: Direction): Boolean {
     return true
 }
 
-private fun Position.isInBounds(nbLines: Int, nbCols: Int): Boolean {
-    return i in 0 until nbLines && j in 0 until nbCols
-}
-
 private const val word: String = "XMAS"
 
 enum class Direction(val di: Int, val dj: Int) {
