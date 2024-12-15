@@ -49,7 +49,7 @@ class Day6 : DayPuzzle<Grid>() {
 
     override fun solve1(input: Grid): String {
         input.moveGuard()
-        return input.visited.size.toString()
+        return input.visited.map { it.first }.toSet().size.toString()
     }
 
     override fun solve2(input: Grid): String {
@@ -74,7 +74,7 @@ private val Direction.symbol: Char
 data class Grid(
     var guard: Pair<Position, Direction>,
     val terrain: List<List<Terrain>>,
-    val visited: MutableSet<Position> = mutableSetOf()
+    val visited: MutableSet<Pair<Position, Direction>> = mutableSetOf()
 ) {
     private val nbLines = terrain.size
     private val nbCols = terrain[0].size
@@ -84,8 +84,8 @@ data class Grid(
     }
 
     fun moveGuard() {
-        var position = guard.first
-        visited.add(position)
+        var position: Position
+        visited.add(guard)
         while (true) {
             position = guard.move()
 
@@ -95,7 +95,6 @@ data class Grid(
 
             guard = when (terrain[position.i][position.j]) {
                 Terrain.EMPTY -> {
-                    visited.add(position)
                     position to guard.second
                 }
 
@@ -103,6 +102,7 @@ data class Grid(
                     guard.first to guard.second.next()
                 }
             }
+            visited.add(guard)
         }
         // End of the grid
     }
@@ -114,8 +114,16 @@ data class Grid(
                 val position = Position(i, j)
                 if (position == guard.first) {
                     builder.append(guard.second.symbol)
-                } else if (visited.contains(position)) {
-                    builder.append("x")
+                } else if (visited.map { it.first }.contains(position)) {
+                    visited.filter { it.first == position }.map { it.second }.distinct().let {
+                        if (it.none { d -> d == Direction.UP || d == Direction.DOWN }) {
+                            builder.append("|")
+                        } else if (it.none { d -> d == Direction.LEFT || d == Direction.RIGHT }) {
+                            builder.append("-")
+                        } else {
+                            builder.append('+')
+                        }
+                    }
                 } else {
                     builder.append(terrain[i][j].symbol)
                 }
