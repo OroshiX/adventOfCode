@@ -29,7 +29,7 @@ class Day8 : DayPuzzle<AntennaGrid>() {
     }
 
     override fun solve2(input: AntennaGrid): String {
-        TODO()
+        return input.antiNodesWithHarmonics.values.flatten().toSet().size.toString()
     }
 }
 
@@ -64,6 +64,36 @@ data class AntennaGrid(
             return antinodes
         }
 
+    val antiNodesWithHarmonics: Map<Char, Set<Position>>
+        get() {
+            val antinodes = mutableMapOf<Char, Set<Position>>()
+            for ((type, positions) in antenas.entries) {
+                val antinodesPositions = mutableSetOf<Position>()
+                for (i in positions.indices) {
+                    for (j in i + 1 until positions.size) {
+                        val position1 = positions[i]
+                        val position2 = positions[j]
+                        antinodesPositions.add(position1)
+                        antinodesPositions.add(position2)
+                        val diffI = position1.i - position2.i
+                        val diffJ = position1.j - position2.j
+                        var position = Position(position1.i + diffI, position1.j + diffJ)
+                        while (position.isInBounds(nbLines, nbColumns)) {
+                            antinodesPositions.add(position)
+                            position = Position(position.i + diffI, position.j + diffJ)
+                        }
+                        position = Position(position2.i - diffI, position2.j - diffJ)
+                        while (position.isInBounds(nbLines, nbColumns)) {
+                            antinodesPositions.add(position)
+                            position = Position(position.i - diffI, position.j - diffJ)
+                        }
+                    }
+                }
+                antinodes[type] = antinodesPositions
+            }
+            return antinodes
+        }
+
     override fun toString(): String {
         val grid = Array(nbLines) { CharArray(nbColumns) { '.' } }
         for ((antenna, positions) in antenas) {
@@ -71,7 +101,7 @@ data class AntennaGrid(
                 grid[position.i][position.j] = antenna
             }
         }
-        val nodes = antiNodes.values.flatten().toSet()
+        val nodes = antiNodesWithHarmonics.values.flatten().toSet()
         for (position in nodes) {
             if (grid[position.i][position.j] == '.') {
                 grid[position.i][position.j] = '#'
