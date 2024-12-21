@@ -20,11 +20,16 @@ class Day11 : DayPuzzle<List<BigInteger>>() {
     }
 
     override fun solve2(input: List<BigInteger>): String {
-        var current = input
-        repeat(75) {
-            current = current.nextStep()
+        val inputMap = mutableMapOf<BigInteger, BigInteger>()
+        for (item in input) {
+            inputMap[item] = inputMap.getOrDefault(item, BigInteger.ZERO) + BigInteger.ONE
         }
-        return current.size.toString()
+        var current = inputMap.toMap()
+        val nextNumbers = mutableMapOf<BigInteger, List<BigInteger>>()
+        repeat(75) {
+            current = nextStep(current, nextNumbers)
+        }
+        return current.values.sumOf { it }.toString()
     }
 }
 
@@ -53,4 +58,33 @@ private fun List<BigInteger>.nextStep(): List<BigInteger> {
 /**
  * Precondition: this > 0
  */
-fun BigInteger.numberOfDigits(): Int = (log10(this.toFloat()) + 1).toInt()
+private fun BigInteger.numberOfDigits(): Int = (log10(this.toFloat()) + 1).toInt()
+
+private fun BigInteger.nextNumbers(): List<BigInteger> {
+    if (this == BigInteger.ZERO) {
+        return listOf(BigInteger.ONE)
+    }
+    val digits = this.numberOfDigits()
+    if (digits % 2 == 0) {
+        // get first it digits of item
+        (digits / 2).let {
+            val pow = BigInteger.valueOf(10.0.pow(it.toDouble()).toLong())
+            return listOf(this / pow, this % pow)
+        }
+    }
+    return listOf(this * MULTIPLIER)
+}
+
+fun nextStep(
+    inputToSum: Map<BigInteger, BigInteger>,
+    nextNumbers: MutableMap<BigInteger, List<BigInteger>>
+): Map<BigInteger, BigInteger> {
+    val result = mutableMapOf<BigInteger, BigInteger>()
+    for ((item, sum) in inputToSum) {
+        val nextNumber = nextNumbers.getOrPut(item) { item.nextNumbers() }
+        for (number in nextNumber) {
+            result[number] = result.getOrDefault(number, BigInteger.ZERO) + sum
+        }
+    }
+    return result
+}
