@@ -25,11 +25,20 @@ class Day12 : DayPuzzle<GridAreas>() {
     }
 
     override fun solve2(input: GridAreas): String {
-        TODO()
+        var sum = 0
+        input.areas.keys.forEach { area ->
+            val areaSize = input.getAreaSize(area)
+            val sides = input.getNbOfSides(area)
+            sum += areaSize * sides
+            println("Area $area: size=$areaSize, sides=$sides")
+        }
+        return sum.toString()
     }
 }
 
 data class GridAreas(val grid: List<List<Char>>) {
+    private val nbLines = grid.size
+    private val nbCols = grid[0].size
     val areas: Map<Int, Set<Position>>
 
     init {
@@ -59,10 +68,14 @@ data class GridAreas(val grid: List<List<Char>>) {
     }
 
     fun getPerimeter(area: Int): Int {
-        return areas[area]?.getPerimeter(grid.size, grid[0].size) ?: 0
+        return areas[area]?.getPerimeter() ?: 0
     }
 
-    private fun Set<Position>.getPerimeter(nbLines: Int, nbCols: Int): Int {
+    fun getNbOfSides(area: Int): Int {
+        return areas[area]?.getNbOfSides() ?: 0
+    }
+
+    private fun Set<Position>.getPerimeter(): Int {
         var perimeter = 0
         for (pos in this) {
             for (direction in directions) {
@@ -76,6 +89,82 @@ data class GridAreas(val grid: List<List<Char>>) {
         return perimeter
     }
 
+    private fun Set<Position>.getNbOfSides(): Int {
+        var nbOfSides = 0
+        // if 2 neighbouring positions are at the top edge of the area, then it forms a side, along with all the positions in between
+        //  and each side is counted only once of the whole polygon
+        val visited = mutableSetOf<Pair<Position, Direction>>()
+        for (pos in this) {
+            for (direction in directions) {
+                if (visited.contains(pos to direction)) continue
+
+                val newPos = pos + direction
+                when {
+                    newPos.isInBounds(nbLines, nbCols).not() || contains(newPos).not() -> {
+                        visitBeforeAndAfter(pos, direction, visited)
+                        nbOfSides++
+                    }
+                }
+            }
+        }
+        return nbOfSides
+    }
+
+    private fun Set<Position>.visitBeforeAndAfter(
+        pos: Position,
+        direction: Direction,
+        visited: MutableSet<Pair<Position, Direction>>
+    ) {
+        val directionBefore = direction.rotateLeft()
+        val directionAfter = direction.rotateRight()
+        var newPos = pos + directionBefore
+        while (newPos.isInBounds(nbLines, nbCols) && contains(newPos)) {
+            visited.add(newPos to direction)
+            val neighbour = newPos + direction
+            when {
+                // Is at the edge of the area
+                neighbour.isInBounds(nbLines, nbCols).not() || contains(neighbour).not() -> {
+                    newPos += directionBefore
+                }
+
+                else -> break
+            }
+        }
+        newPos = pos + directionAfter
+        while (newPos.isInBounds(nbLines, nbCols) && contains(newPos)) {
+            visited.add(newPos to direction)
+            val neighbour = newPos + direction
+            when {
+                // Is at the edge of the area
+                neighbour.isInBounds(nbLines, nbCols).not() || contains(neighbour).not() -> {
+                    newPos += directionAfter
+                }
+
+                else -> break
+            }
+        }
+    }
+
+}
+
+private fun Direction.rotateRight(): Direction {
+    return when (this) {
+        Direction.UP -> Direction.RIGHT
+        Direction.RIGHT -> Direction.DOWN
+        Direction.DOWN -> Direction.LEFT
+        Direction.LEFT -> Direction.UP
+        else -> throw IllegalArgumentException("Invalid direction")
+    }
+}
+
+private fun Direction.rotateLeft(): Direction {
+    return when (this) {
+        Direction.UP -> Direction.LEFT
+        Direction.LEFT -> Direction.DOWN
+        Direction.DOWN -> Direction.RIGHT
+        Direction.RIGHT -> Direction.UP
+        else -> throw IllegalArgumentException("Invalid direction")
+    }
 }
 
 private operator fun Position.plus(direction: Direction): Position {
