@@ -167,7 +167,7 @@ private fun Direction.rotateLeft(): Direction {
     }
 }
 
-private operator fun Position.plus(direction: Direction): Position {
+operator fun Position.plus(direction: Direction): Position {
     return Position(i + direction.di, j + direction.dj)
 }
 
