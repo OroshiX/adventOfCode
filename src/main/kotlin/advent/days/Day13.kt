@@ -56,15 +56,15 @@ class Day13 : DayPuzzle<List<ClawMachine>>() {
 data class XY(val x: Long, val y: Long)
 
 data class ClawMachine(val buttonA: XY, val buttonB: XY, val prize: XY) {
-    fun myPrize(part1: Boolean): XY = if (part1) prize else XY(prize.x + 10000000000000, prize.y + 10000000000000)
+    private fun myPrize(part1: Boolean): XY = if (part1) prize else XY(prize.x + 10000000000000, prize.y + 10000000000000)
 
     fun hasMultipleSolutions(): Boolean {
         return dividende == 0L
     }
 
-    val dividende = buttonA.x * buttonB.y - buttonA.y * buttonB.x
+    private val dividende = buttonA.x * buttonB.y - buttonA.y * buttonB.x
 
-    fun solutionAB(part1: Boolean): Pair<Long, Long>? {
+    private fun solutionAB(part1: Boolean): Pair<Long, Long>? {
         if ((myPrize(part1).x * buttonB.y - myPrize(part1).y * buttonB.x) % dividende != 0L ||
             (myPrize(part1).y * buttonA.x - myPrize(part1).x * buttonA.y) % dividende != 0L
         ) {

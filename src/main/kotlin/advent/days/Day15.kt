@@ -1,6 +1,7 @@
 package advent.days
 
 import advent.DayPuzzle
+import advent.Direction
 import advent.Position
 import java.util.*
 import kotlin.math.sign
@@ -53,13 +54,13 @@ class Day15 : DayPuzzle<GridWithBoxes>() {
 }
 
 data class GridWithBoxes(val initialGrid: List<List<CellType>>, val moves: List<Direction>) {
-    var player: Position = initialGrid.indexOfFirst { it.contains(CellType.PLAYER) }
+    private var player: Position = initialGrid.indexOfFirst { it.contains(CellType.PLAYER) }
         .let { i ->
             val j = initialGrid[i].indexOfFirst { it == CellType.PLAYER }
             Position(i, j)
         }
-    val grid: MutableList<MutableList<CellType>> = initialGrid.map { it.toMutableList() }.toMutableList()
-    var indexNextMove = 0
+    private val grid: MutableList<MutableList<CellType>> = initialGrid.map { it.toMutableList() }.toMutableList()
+    private var indexNextMove = 0
 
     fun move(): Boolean {
         val nextMove = moves[indexNextMove]
@@ -113,7 +114,9 @@ data class GridWithBoxes(val initialGrid: List<List<CellType>>, val moves: List<
     }
 
     override fun toString(): String {
-        return "Move $indexNextMove (${moves.getOrNull(indexNextMove)?.representation()}):\n" + grid.joinToString("\n") { row ->
+        return "Move $indexNextMove (${
+            moves.getOrNull(indexNextMove)?.representation()
+        }):\n" + grid.joinToString("\n") { row ->
             row.joinToString("") { cell -> cell.representation.toString() }
         }
     }

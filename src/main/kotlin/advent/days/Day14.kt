@@ -52,7 +52,7 @@ data class GridPositionsAndVelocities(
     val widthX: Int = 101,
     val heightY: Int = 103
 ) {
-    val current: MutableList<PositionAndVelocity> = positionsAndVelocities.toMutableList()
+    private val current: MutableList<PositionAndVelocity> = positionsAndVelocities.toMutableList()
 
     fun move() {
         for (i in current.indices) {

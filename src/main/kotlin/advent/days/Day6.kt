@@ -1,6 +1,7 @@
 package advent.days
 
 import advent.DayPuzzle
+import advent.Direction
 import advent.Position
 import java.util.*
 

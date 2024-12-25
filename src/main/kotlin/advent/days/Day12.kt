@@ -1,6 +1,7 @@
 package advent.days
 
 import advent.DayPuzzle
+import advent.Direction
 import advent.Position
 import java.util.*
 
@@ -78,7 +79,7 @@ data class GridAreas(val grid: List<List<Char>>) {
     private fun Set<Position>.getPerimeter(): Int {
         var perimeter = 0
         for (pos in this) {
-            for (direction in directions) {
+            for (direction in Direction.cross) {
                 val newPos = pos + direction
                 when {
                     newPos.isInBounds(nbLines, nbCols).not() -> perimeter++
@@ -95,7 +96,7 @@ data class GridAreas(val grid: List<List<Char>>) {
         //  and each side is counted only once of the whole polygon
         val visited = mutableSetOf<Pair<Position, Direction>>()
         for (pos in this) {
-            for (direction in directions) {
+            for (direction in Direction.cross) {
                 if (visited.contains(pos to direction)) continue
 
                 val newPos = pos + direction
@@ -147,32 +148,6 @@ data class GridAreas(val grid: List<List<Char>>) {
 
 }
 
-private fun Direction.rotateRight(): Direction {
-    return when (this) {
-        Direction.UP -> Direction.RIGHT
-        Direction.RIGHT -> Direction.DOWN
-        Direction.DOWN -> Direction.LEFT
-        Direction.LEFT -> Direction.UP
-        else -> throw IllegalArgumentException("Invalid direction")
-    }
-}
-
-private fun Direction.rotateLeft(): Direction {
-    return when (this) {
-        Direction.UP -> Direction.LEFT
-        Direction.LEFT -> Direction.DOWN
-        Direction.DOWN -> Direction.RIGHT
-        Direction.RIGHT -> Direction.UP
-        else -> throw IllegalArgumentException("Invalid direction")
-    }
-}
-
-operator fun Position.plus(direction: Direction): Position {
-    return Position(i + direction.di, j + direction.dj)
-}
-
-private val directions = listOf(Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT)
-
 private fun separateArea(
     id: Int,
     area: Set<Position>,
@@ -193,7 +168,7 @@ private fun separateArea(
             val current = queue.removeFirst()
             newArea.add(current)
             positionsLeft.remove(current)
-            for (direction in directions) {
+            for (direction in Direction.cross) {
                 val newPos = current + direction
                 if (newPos.isInBounds(nbLines, nbCols) && newPos !in visited && positionsLeft.contains(newPos)) {
                     queue.add(newPos)

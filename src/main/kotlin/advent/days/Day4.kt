@@ -1,6 +1,7 @@
 package advent.days
 
 import advent.DayPuzzle
+import advent.Direction
 import advent.Position
 import java.util.*
 
@@ -70,14 +71,3 @@ fun List<String>.isStart(i: Int, j: Int, direction: Direction): Boolean {
 }
 
 private const val word: String = "XMAS"
-
-enum class Direction(val di: Int, val dj: Int) {
-    UP(-1, 0),
-    DOWN(1, 0),
-    LEFT(0, -1),
-    RIGHT(0, 1),
-    UP_LEFT(-1, -1),
-    UP_RIGHT(-1, 1),
-    DOWN_LEFT(1, -1),
-    DOWN_RIGHT(1, 1)
-}
