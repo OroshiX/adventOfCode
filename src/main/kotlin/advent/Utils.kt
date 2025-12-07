@@ -5,6 +5,7 @@ import com.github.ajalt.mordant.rendering.TextStyles
 import com.github.ajalt.mordant.terminal.ConversionResult
 import com.github.ajalt.mordant.terminal.StringPrompt
 import com.github.ajalt.mordant.terminal.YesNoPrompt
+import com.github.ajalt.mordant.terminal.prompt
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream

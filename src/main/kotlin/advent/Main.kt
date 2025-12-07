@@ -7,6 +7,9 @@ import com.github.ajalt.mordant.rendering.TextColors.*
 import com.github.ajalt.mordant.rendering.TextStyles.bold
 import com.github.ajalt.mordant.rendering.TextStyles.underline
 import com.github.ajalt.mordant.terminal.Terminal
+import com.github.ajalt.mordant.terminal.danger
+import com.github.ajalt.mordant.terminal.info
+import com.github.ajalt.mordant.terminal.success
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
