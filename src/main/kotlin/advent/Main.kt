@@ -22,7 +22,7 @@ import java.util.*
 
 
 //const val numDay = 1
-const val year = 2024
+const val year = 2025
 val terminal = Terminal()
 fun main() = runBlocking {
     val title = """
