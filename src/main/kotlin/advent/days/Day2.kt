@@ -31,7 +31,15 @@ class Day2 : DayPuzzle<List<Range>>() {
     }
 
     override fun solve2(input: List<Range>): String {
-        TODO()
+        var sum = 0L
+        for (range in input) {
+            for (id in range.iterator()) {
+                if (!isValidId2(id)) {
+                    sum += id
+                }
+            }
+        }
+        return sum.toString()
     }
 }
 
@@ -54,4 +62,31 @@ private fun isValidId1(id: Long): Boolean {
         }
     }
     return false
+}
+
+private fun isValidId2(id: Long): Boolean {
+    val idString = id.toString()
+
+    for (seqLength in 1..idString.length / 2) {
+        if (isRepeatingSequence(idString, seqLength)) {
+            return false
+        }
+    }
+    return true
+}
+
+private fun isRepeatingSequence(idString: String, seqLength: Int): Boolean {
+    val length = idString.length
+    if (length % seqLength != 0) {
+        return false
+    }
+
+    val sequence = idString.take(seqLength)
+    // Check if the entire string is made up of the repeating sequence
+    for (i in seqLength until length step seqLength) {
+        if (idString.substring(i, i + seqLength) != sequence) {
+            return false
+        }
+    }
+    return true
 }
