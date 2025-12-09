@@ -28,7 +28,7 @@ class Day16 : DayPuzzle<Labyrinth>() {
     }
 
     override fun solve2(input: Labyrinth): String {
-        TODO()
+        return input.findPositionsOfShortestPaths().size.toString()
     }
 }
 
@@ -49,15 +49,17 @@ data class Labyrinth(val map: List<List<Element>>) {
 
     private val dijkstraResult = dijkstra()
 
-    fun findShortestPath(): List<Position> {
+    fun findPositionsOfShortestPaths(): Set<Position> {
         val (distances, previous) = dijkstraResult
-        val path = mutableListOf<Position>()
+        val path = mutableSetOf<Position>()
 
-        var current: Position? = endingPoint
-        if (previous.containsKey(current) || current == startingPoint) {
-            while (current != null) {
-                path.add(0, current)
-                current = previous[current]
+        val queue = ArrayDeque<Position>()
+        queue.add(endingPoint)
+        while (queue.isNotEmpty()) {
+            val current = queue.removeFirst()
+            path.add(current)
+            for (previousPosition in previous.getValue(current)) {
+                queue.add(previousPosition)
             }
         }
         return path
@@ -74,11 +76,11 @@ data class Labyrinth(val map: List<List<Element>>) {
      */
 
     private fun dijkstra(): DijkstraResult {
-        val distances = mutableMapOf<Position, Pair<Int, Direction>>()
-        val previousPositions = mutableMapOf<Position, Position>()
+        val distances = mutableMapOf<Position, Map<Direction, Int>>()
+        val previousPositions = mutableMapOf<Position, Set<Position>>()
         val queue = PriorityQueue<PositionAndPriority>()
 
-        distances[startingPoint] = 0 to Direction.RIGHT
+        distances[startingPoint] = mapOf(Direction.RIGHT to 0)
         queue.add(PositionAndPriority(startingPoint, 0))
 
         while (queue.isNotEmpty()) {
@@ -90,10 +92,25 @@ data class Labyrinth(val map: List<List<Element>>) {
                 if (neighbor.isInBounds(nbLines, nbCols) &&
                     map[neighbor.i][neighbor.j] != Element.WALL
                 ) {
-                    val (dist, associatedDirection) = distances.getValue(current)
+                    val (dist, associatedDirections) = distances.getValue(current)
+                    var min = Int.MAX_VALUE
+                    var minScore = Int.MAX_VALUE
+                    for (associatedDirection in associatedDirections) {
+                        val score = scoreStep(current, associatedDirection, neighbor)
+                        if (score <= minScore) {
+                            minScore = score
+                            min = associatedDirection
+                        }
+                    }
+                    val minOf = associatedDirections.minOf { dir ->
+                        scoreStep(current, dir, neighbor)
+                    }
+
                     val alt = dist + scoreStep(current, associatedDirection, neighbor)
-                    if (alt < (distances[neighbor]?.first ?: Int.MAX_VALUE)) {
-                        previousPositions[neighbor] = current
+                    if (alt <= (distances[neighbor]?.first ?: Int.MAX_VALUE)) {
+                        previousPositions.compute(neighbor) { _, previous ->
+                            (previous ?: emptySet()) + current
+                        }
                         distances[neighbor] = alt to direction
                         queue.add(PositionAndPriority(neighbor, alt))
                     }
@@ -145,7 +162,7 @@ private operator fun Position.minus(position: Position): Direction {
 
 private data class DijkstraResult(
     val distances: Map<Position, Pair<Int, Direction>>,
-    val previousPosition: Map<Position, Position>
+    val previousPosition: Map<Position, Set<Position>>
 )
 
 data class PositionAndPriority(val position: Position, val priority: Int) :
