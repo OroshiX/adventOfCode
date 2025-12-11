@@ -29,7 +29,14 @@ class Day4 : DayPuzzle<ToiletPaperGrid>() {
     }
 
     override fun solve2(input: ToiletPaperGrid): String {
-        TODO()
+        var currentGrid = input
+        var removed = 0
+        do {
+            val (newGrid, currentRemoved) = currentGrid.removeAccessible()
+            removed += currentRemoved
+            currentGrid = newGrid
+        } while (currentRemoved > 0)
+        return removed.toString()
     }
 }
 
@@ -47,5 +54,26 @@ data class ToiletPaperGrid(val grid: List<List<Boolean>>) {
             }
         }
         return sum < 4
+    }
+
+    fun removeAccessible(): Pair<ToiletPaperGrid, Int> {
+        var removedCount = 0
+        val newGrid = grid.mapIndexed { rowIndex, row ->
+            row.mapIndexed { colIndex, cell ->
+                if (cell && isAccessible(rowIndex, colIndex)) {
+                    removedCount++
+                    false
+                } else {
+                    cell
+                }
+            }
+        }
+        return ToiletPaperGrid(newGrid) to removedCount
+    }
+
+    override fun toString(): String {
+        return grid.joinToString("\n") { row ->
+            row.joinToString("") { if (it) "@" else "." }
+        }
     }
 }
