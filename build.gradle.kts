@@ -29,5 +29,5 @@ kotlin {
 }
 
 application {
-    mainClass.set("MainKt")
+    mainClass.set("advent.MainKt")
 }
