@@ -2,17 +2,133 @@ package advent.days
 
 import advent.DayPuzzle
 import java.util.*
+import kotlin.math.pow
 
-class Day8 : DayPuzzle<String>() {
-    override fun parse(scanner: Scanner): String {
-        TODO()
+class Day8 : DayPuzzle<List<JunctionBox>>() {
+    override fun parse(scanner: Scanner): List<JunctionBox> {
+        val boxes = mutableListOf<JunctionBox>()
+        var id = 0
+        while (scanner.hasNextLine()) {
+            val line = scanner.nextLine()
+            val (x, y, z) = line.split(",").map { it.toInt() }
+            boxes.add(JunctionBox(x, y, z, id))
+            id++
+        }
+        return boxes
     }
 
-    override fun solve1(input: String): String {
-        TODO()
+    override fun solve1(input: List<JunctionBox>): String {
+        val toCircuits = input.withIndex().associate { it.value.id to it.index }.toMutableMap()
+        val circuits = input.associate { it.id to setOf(it.id) }.toMutableMap()
+        val excludeList = mutableSetOf<Pair<JunctionBox, JunctionBox>>()
+        repeat(1000) {
+            connectClosest(input, toCircuits, circuits, excludeList)
+        }
+        val sizes =
+            circuits.toList().sortedBy { it.second.size }.map { it.second.size }.reversed().take(3)
+        var multiplier = 1
+        for (size in sizes) {
+            multiplier *= size
+        }
+        return multiplier.toString()
     }
 
-    override fun solve2(input: String): String {
+    override fun solve2(input: List<JunctionBox>): String {
         TODO()
     }
+}
+
+data class JunctionBox(val x: Int, val y: Int, val z: Int, val id: Int) {
+    fun sqrDistance(other: JunctionBox): Long {
+        return ((other.x.toDouble() - x).pow(2) +
+                (other.y.toDouble() - y).pow(2) +
+                (other.z.toDouble() - z).pow(2)).toLong()
+    }
+}
+
+private fun connectClosest(
+    junctions: List<JunctionBox>,
+    junctionToCircuits: MutableMap<Int, Int>,
+    circuits: MutableMap<Int, Set<Int>>,
+    excludeList: MutableSet<Pair<JunctionBox, JunctionBox>>,
+): List<JunctionBox> {
+    val closestTwo = findClosest(junctions, excludeList)
+    if (closestTwo != null) {
+        excludeList.add(closestTwo)
+        val circuit1Id = junctionToCircuits.getValue(closestTwo.first.id)
+        val circuit2Id = junctionToCircuits.getValue(closestTwo.second.id)
+        if (circuit1Id != circuit2Id) {
+            if (circuits.getValue(circuit1Id).size > circuits.getValue(circuit2Id).size) {
+                // biggest is 1
+                mergeCircuits(
+                    eating = circuit1Id,
+                    eaten = circuit2Id,
+                    circuits = circuits,
+                    junctionToCircuit = junctionToCircuits,
+                )
+//                circuits[circuit1Id] = circuits.getValue(circuit1Id) + setOf(closestTwo.second.id)
+//                junctionToCircuits[closestTwo.second.id] = circuit1Id
+//                circuits.remove(circuit2Id)
+            } else {
+                // biggest is 2
+                mergeCircuits(
+                    eating = circuit2Id,
+                    eaten = circuit1Id,
+                    circuits = circuits,
+                    junctionToCircuit = junctionToCircuits,
+                )
+//                circuits[circuit2Id] = circuits.getValue(circuit2Id) + setOf(closestTwo.first.id)
+//                junctionToCircuits[closestTwo.first.id] = circuit2Id
+//                circuits.remove(circuit1Id)
+            }
+
+        }
+    }
+    return junctions
+}
+
+private fun mergeCircuits(
+    eating: Int,
+    eaten: Int,
+    circuits: MutableMap<Int, Set<Int>>,
+    junctionToCircuit: MutableMap<Int, Int>,
+) {
+    val circuitsEating = circuits.getValue(eating).toMutableSet()
+    // Loop through all in eaten and add them to the
+    for (oldCircuitJunction in circuits.getValue(eaten)) {
+        junctionToCircuit[oldCircuitJunction] = eating
+        circuitsEating.add(oldCircuitJunction)
+    }
+    circuits[eating] = circuitsEating
+
+    // then remove eaten
+    circuits.remove(eaten)
+
+}
+
+private fun findClosest(
+    junctions: List<JunctionBox>,
+    excludeList: Set<Pair<JunctionBox, JunctionBox>>
+): Pair<JunctionBox, JunctionBox>? {
+    var shortestDistance: Long? = null
+    var result: Pair<JunctionBox, JunctionBox>? = null
+    for ((index, junction1) in junctions.withIndex()) {
+        for (k in index + 1 until junctions.size) {
+            val junction2 = junctions[k]
+            if (excludeList.contains(junction1, junction2)) continue
+            val distance = junction1.sqrDistance(junction2)
+            if (shortestDistance == null || distance < shortestDistance) {
+                shortestDistance = distance
+                result = junction1 to junction2
+            }
+        }
+    }
+    return result
+}
+
+private fun Set<Pair<JunctionBox, JunctionBox>>.contains(
+    junction1: JunctionBox,
+    junction2: JunctionBox
+): Boolean {
+    return this.contains(junction1 to junction2) || this.contains(junction2 to junction1)
 }
