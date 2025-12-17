@@ -31,24 +31,31 @@ data class RayGrid(val rows: Int, val cols: Int, val grid: List<List<RayCell>>) 
             return Position(row, col)
         }
 
-    fun stepRayPositions(raysColumns: List<Int>, stepNumber: Int): Pair<List<Int>, Int> {
+    fun stepRayPositions(raysColumns: Set<Int>, stepNumber: Int): Pair<Set<Int>, Int> {
         var nbSplits = 0
-        val newRays = raysColumns.toMutableList()
+        val newRays = mutableSetOf<Int>()
 
         if (grid[stepNumber].contains(RayCell.SPLITTER).not()) {
             // No splitter
             return raysColumns to 0
         }
 
-        for (j in 0 until cols) {
-            // TODO split the rays
+        for (column in raysColumns) {
+            if (grid[stepNumber][column] == RayCell.SPLITTER) {
+                nbSplits++
+                newRays.add(column - 1)
+                newRays.add(column + 1)
+            } else {
+                newRays.add(column)
+            }
         }
+
         return newRays to nbSplits
     }
 
     fun howManySplits(): Int {
         val start = startPosition
-        var currentRays = listOf(start.j)
+        var currentRays = setOf(start.j)
         var currentStep = start.i
         var sum = 0
         while (currentStep < grid.size) {
