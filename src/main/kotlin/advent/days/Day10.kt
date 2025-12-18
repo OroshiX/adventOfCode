@@ -43,7 +43,7 @@ class Day10 : DayPuzzle<List<LightDiagram>>() {
     }
 
     override fun solve1(input: List<LightDiagram>): String {
-        val sumPresses = input.sumOf { it.solveCount() }
+        val sumPresses = input.sumOf { it.solveCount1() }
         return sumPresses.toString()
     }
 
@@ -58,14 +58,73 @@ data class LightDiagram(
     val buttonToggles: List<ButtonToggle>,
     val requiredJoltage: List<Int>
 ) {
-    fun solveCount(): Int {
-        val buttonsPossible =
-            targetLightsOn.forEach { lightPosition ->
-                // TODO
+
+    fun solveCount1(): Int {
+        val nbButtons = buttonToggles.size
+        val allCombinations = generateCombinations(nbButtons)
+        for (i in 1..nbButtons) {
+            val combinations = allCombinations[i]
+                ?: throw IllegalArgumentException("All combinations must be provided")
+            for (combination in combinations) {
+                if (withIndices(combination)) {
+                    return i
+                }
             }
-        return 0
+        }
+        throw IllegalArgumentException("Impossible to solve")
+    }
+
+
+    fun withIndices(listIndices: List<Int>): Boolean {
+        val buttonsUsed = listIndices.map { index -> buttonToggles[index] }
+        var indicators = emptySet<Int>()
+        for (button in buttonsUsed) {
+            indicators = button.toggle(indicators)
+        }
+        if (indicators.size != targetLightsOn.size) {
+            return false
+        }
+        if (indicators.minus(targetLightsOn).isNotEmpty()) {
+            return false
+        }
+        return true
     }
 }
+
+private var allCombinations = mutableMapOf<Combination, List<List<Int>>>()
+private fun generateCombinations(n: Int): Map<Int, List<List<Int>>> {
+    val combinations = mutableMapOf<Int, List<List<Int>>>()
+    for (k in 1..n) {
+        // take k parmi n
+        val kParmiN = kParmiN(k, n)
+        combinations[k] = kParmiN
+    }
+    return combinations
+}
+
+private data class Combination(val k: Int, val n: Int)
+
+fun kParmiN(k: Int, n: Int): List<List<Int>> {
+    if (allCombinations.contains(Combination(k, n))) {
+        return allCombinations.getValue(Combination(k, n))
+    }
+    val combinations = mutableListOf<List<Int>>()
+    fun backtrack(start: Int, currentCombination: MutableList<Int>) {
+        if (currentCombination.size == k) {
+            combinations.add(currentCombination.toList())
+            return
+        }
+        for (i in start until n) {
+            currentCombination.add(i)
+            backtrack(i + 1, currentCombination)
+            currentCombination.removeAt(currentCombination.size - 1)
+        }
+    }
+    backtrack(0, mutableListOf())
+    allCombinations[Combination(k, n)] = combinations
+    return combinations
+}
+
 
 data class ButtonToggle(val positions: List<Int>) {
     fun toggle(indicatorLights: Set<Int>): Set<Int> {
