@@ -48,7 +48,8 @@ class Day10 : DayPuzzle<List<LightDiagram>>() {
     }
 
     override fun solve2(input: List<LightDiagram>): String {
-        TODO()
+        val sumPresses = input.sumOf { it.solveCount2() }
+        return sumPresses.toString()
     }
 }
 
@@ -72,6 +73,9 @@ data class LightDiagram(
             }
         }
         throw IllegalArgumentException("Impossible to solve")
+    }
+    fun solveCount2(): Int {
+        TODO()
     }
 
 
