@@ -2,7 +2,7 @@ package advent.days
 
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 
 class Day5Test {
     @Test

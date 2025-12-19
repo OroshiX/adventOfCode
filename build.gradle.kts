@@ -1,33 +1,8 @@
-// For `KotlinCompile` task below
-
 plugins {
-    kotlin("jvm") version "2.2.20" // Kotlin version to use
-    application // Application plugin.
-}
-
-group = "com.aroxoft"
-version = "1.0-SNAPSHOT"
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.21")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0-RC")
-    implementation("com.github.ajalt.mordant:mordant:3.0.2")
-    testImplementation("io.kotest:kotest-runner-junit5:5.8.0")
-    testImplementation("io.kotest:kotest-assertions-core:5.8.0")
-}
-
-tasks.test {
-    useJUnitPlatform()
-}
-
-kotlin {
-    jvmToolchain(17)
-}
-
-application {
-    mainClass.set("advent.MainKt")
+    // this is necessary to avoid the plugins to be loaded multiple times
+    // in each subproject's classloader
+    alias(libs.plugins.composeHotReload) apply false
+    alias(libs.plugins.composeMultiplatform) apply false
+    alias(libs.plugins.composeCompiler) apply false
+    alias(libs.plugins.kotlinMultiplatform) apply false
 }

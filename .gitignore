@@ -4,3 +4,4 @@ inputs/
 adventOfCode.iml
 .gradle/
 build/
+.kotlin/

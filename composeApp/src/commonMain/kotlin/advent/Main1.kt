@@ -1,8 +1,6 @@
 package advent
 
 import advent.days.*
-import com.github.ajalt.mordant.animation.textAnimation
-import com.github.ajalt.mordant.rendering.TextColors
 import com.github.ajalt.mordant.rendering.TextColors.*
 import com.github.ajalt.mordant.rendering.TextStyles.bold
 import com.github.ajalt.mordant.rendering.TextStyles.underline
@@ -10,8 +8,6 @@ import com.github.ajalt.mordant.terminal.Terminal
 import com.github.ajalt.mordant.terminal.danger
 import com.github.ajalt.mordant.terminal.info
 import com.github.ajalt.mordant.terminal.success
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.io.File
 import java.io.FileInputStream
@@ -24,7 +20,7 @@ import java.util.*
 //const val numDay = 1
 const val year = 2025
 val terminal = Terminal()
-fun main() = runBlocking {
+fun main1() = runBlocking {
     val title = """
         ❄️❄️❄️🌟❄️❄️❄️🌟❄️❄️❄️
         ${(green on black)("\uD83C\uDF84 Advent of Code $year \uD83C\uDF84")}
@@ -44,22 +40,7 @@ fun main() = runBlocking {
             else saveFile(numDay, year)
         )
     )
-    val anim = terminal.textAnimation<Int> { frame ->
-        (1..50).joinToString("") {
-            val hue = (frame + it) * 3 % 360
-            TextColors.hsv(hue, 1, 1)("===")
-        }
-    }
     terminal.cursor.hide(showOnExit = true)
-    var finished = false
-    launch {
-        var i = 0
-        while (finished.not()) {
-            anim.update(i)
-            i++
-            delay(50)
-        }
-    }
 
     val startTime = System.currentTimeMillis()
     val res = day.solve(scanner, part)
@@ -72,7 +53,6 @@ fun main() = runBlocking {
             terminal.danger("❌ Expected $expected but got $res")
         }
     }
-    finished = true
     terminal.info("Took $elapsedTime ms to execute\n")
 
     terminal.println("${underline("Result is:")}\n${(bold + (brightCyan on black))(res)}")
