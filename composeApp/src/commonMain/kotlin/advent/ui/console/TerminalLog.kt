@@ -28,19 +28,30 @@ fun TerminalLog(modifier: Modifier = Modifier, logsLines: List<LogLine>, onClear
             .fillMaxWidth(),
         color = MaterialTheme.colorScheme.consoleContainer()
     ) {
-        Row {
-            Column {
-                IconButton(onClick = onClear) {
-                    Icon(imageVector = Icons.Filled.DeleteForever, contentDescription = "Delete")
+        Column {
+            Text(
+                modifier = Modifier.padding(start = 8.dp),
+                text = "Terminal",
+                color = MaterialTheme.colorScheme.onConsoleContainer(),
+                style = MaterialTheme.typography.titleMedium.codeStyle(),
+            )
+            Row {
+                Column {
+                    IconButton(onClick = onClear) {
+                        Icon(
+                            imageVector = Icons.Filled.DeleteForever,
+                            contentDescription = "Delete"
+                        )
+                    }
                 }
-            }
-            LazyColumn(modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)) {
-                items(items = logsLines) {
-                    Text(
-                        text = it.text,
-                        color = if (it.color == Color.Unspecified) MaterialTheme.colorScheme.onConsoleContainer() else it.color,
-                        style = MaterialTheme.typography.bodyMedium.codeStyle()
-                    )
+                LazyColumn(modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)) {
+                    items(items = logsLines) {
+                        Text(
+                            text = it.text,
+                            color = if (it.color == Color.Unspecified) MaterialTheme.colorScheme.onConsoleContainer() else it.color,
+                            style = MaterialTheme.typography.bodyMedium.codeStyle()
+                        )
+                    }
                 }
             }
         }

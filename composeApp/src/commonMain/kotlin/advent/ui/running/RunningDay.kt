@@ -142,11 +142,15 @@ fun RunningDayScreen(
                     onBack = onBack,
                 )
             }
-            if (showTerminal) {
+            AnimatedVisibility(visible = showTerminal) {
                 val presenter: TerminalPresenter = koinInject()
 
                 val logs by presenter.logLines.collectAsState()
                 TerminalLog(logsLines = logs, onClear = presenter::clear)
+            }
+            AnimatedVisibility(visible = showInput) {
+                // TODO show input here
+                Text("Your input was: ")
             }
         }
     }
