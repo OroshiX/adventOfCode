@@ -141,12 +141,7 @@ internal fun AskInput(
                 selected = part,
                 dropdownOptions = Part.entries,
                 onChooseOption = { onChangePart(it) },
-                toLabel = {
-                    when (it) {
-                        Part.ONE -> "Part 1"
-                        Part.TWO -> "Part 2"
-                    }
-                }
+                toLabel = { it.display }
             )
             LabelDropdown(
                 title = "Data",
