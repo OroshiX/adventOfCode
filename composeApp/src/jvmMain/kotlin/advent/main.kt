@@ -3,6 +3,7 @@ package advent
 import advent.di.appModules
 import advent.ui.App
 import advent.ui.config.ConfigManipulator
+import advent.ui.theme.AdventTheme
 import adventofcode.composeapp.generated.resources.Res
 import adventofcode.composeapp.generated.resources.favicon
 import adventofcode.composeapp.generated.resources.sapin_advent_of_code_landscape
@@ -42,10 +43,12 @@ fun main() = runBlocking {
                 transparent = true
             ) {
                 WindowDraggableArea {
-                    Image(
-                        painterResource(Res.drawable.sapin_advent_of_code_landscape),
-                        contentDescription = "splash"
-                    )
+                    AdventTheme {
+                        Image(
+                            painterResource(Res.drawable.sapin_advent_of_code_landscape),
+                            contentDescription = "splash"
+                        )
+                    }
                 }
             }
         } else {

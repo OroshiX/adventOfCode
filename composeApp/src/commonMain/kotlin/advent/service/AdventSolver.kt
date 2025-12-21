@@ -29,6 +29,7 @@ import advent.days.Day8
 import advent.days.Day9
 import advent.ui.config.ConfigManipulator
 import advent.ui.config.MissingCookieException
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
@@ -64,6 +65,7 @@ internal class AdventSolverImpl(
     private val clock: Clock,
     private val configManipulator: ConfigManipulator,
 ) : AdventSolver {
+    private val coroutineScope = CoroutineScope(Dispatchers.Default)
     override suspend fun solve(
         dayNumber: Int,
         part: Part,
@@ -73,15 +75,17 @@ internal class AdventSolverImpl(
         onUpdateElapsed: suspend (Duration) -> Unit,
     ): Result<AdventResult> {
         val day = getDayByNumber(dayNumber)
-
+        withContext(Dispatchers.Main) {
+            onProgressUpdate(Progress(0, 1))
+        }
         try {
             val scanner = Scanner(FileInputStream(file))
 
 
             val startTime = clock.now()
 
-            val job = withContext(Dispatchers.Default) {
-                launch {
+            val job = coroutineScope.launch {
+                withContext(Dispatchers.Default) {
                     while (true) {
                         delay(1.seconds)
                         onUpdateElapsed(clock.now() - startTime)
@@ -95,6 +99,9 @@ internal class AdventSolverImpl(
                     onProgressUpdate = onProgressUpdate,
                 )
             val elapsedTime = clock.now() - startTime
+            withContext(Dispatchers.Main) {
+                onProgressUpdate(Progress(1, 1))
+            }
             job.cancel(message = "Finished solving")
             if (debug) {
                 val expected = configManipulator.getExpectedResult(dayNumber, part)

@@ -6,6 +6,8 @@ import advent.service.AdventSolver
 import advent.service.AdventSolverImpl
 import advent.ui.config.ConfigManipulator
 import advent.ui.config.ConfigManipulatorImpl
+import advent.ui.console.TerminalPresenter
+import advent.ui.console.TerminalPresenterImpl
 import advent.ui.input.AskInputPresenter
 import advent.ui.input.AskInputPresenterImpl
 import advent.ui.running.DayPresenter
@@ -25,8 +27,13 @@ fun appModules() = listOf(
 val uiModule = module {
     factory<AskInputPresenter> { AskInputPresenterImpl(configManipulator = get()) }
     factory<MissingInformationPresenter> { parameters ->
-        MissingInformationPresenterImpl(missingInformation = parameters.get())
+        MissingInformationPresenterImpl(
+            missingInformation = parameters.get(),
+            dayNumber = parameters.get(),
+            configManipulator = get(),
+        )
     }
+    factory<TerminalPresenter> { TerminalPresenterImpl(logger = get()) }
     factory<DayPresenter> { parameters ->
         DayPresenterImpl(
             configManipulator = get(),

@@ -14,6 +14,7 @@ interface AdventLogger {
     fun i(message: String)
     fun success(message: String)
     fun danger(message: String)
+    fun clearLogs()
 }
 
 private val INFO = Color(0xFFC7B548)
@@ -25,6 +26,10 @@ private val SUCCESS = Color(0xFF188B18)
 class AdventLoggerImpl : AdventLogger {
     private val _logs = MutableStateFlow(emptyList<LogLine>())
     override val logs: StateFlow<List<LogLine>> = _logs
+
+    override fun clearLogs() {
+        _logs.update { emptyList() }
+    }
 
     override fun i(message: String) {
         _logs.update { it + LogLine(message, color = INFO) }

@@ -2,6 +2,7 @@ package advent.ui.input
 
 import advent.Part
 import advent.ui.navigation.DayRunning
+import advent.ui.theme.codeStyle
 import adventofcode.composeapp.generated.resources.Res
 import adventofcode.composeapp.generated.resources.sapin_cadeaux_advent_of_code_simple
 import androidx.compose.foundation.Image
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -39,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
@@ -218,6 +221,8 @@ private fun <T> LabelDropdown(
 fun InputWithLabel(
     modifier: Modifier = Modifier,
     label: String,
+    description: String? = null,
+    multiLine: Boolean = false,
     input: String,
     onTextChanged: (String) -> Unit
 ) {
@@ -227,8 +232,18 @@ fun InputWithLabel(
             onTextChanged(it.toString())
         }
     }
-    Column(modifier = modifier) {
-        Text(text = label)
-        TextField(state = textFieldState)
+    Column(modifier = modifier, verticalArrangement = Arrangement.Top) {
+        description?.let {
+            Text(it, style = MaterialTheme.typography.labelLarge)
+        }
+        TextField(
+            modifier = Modifier.fillMaxWidth()
+                .heightIn(min = if (multiLine) 50.dp else Dp.Unspecified),
+            state = textFieldState,
+            label = {
+                Text(text = label)
+            },
+            textStyle = MaterialTheme.typography.bodyMedium.codeStyle(),
+        )
     }
 }
