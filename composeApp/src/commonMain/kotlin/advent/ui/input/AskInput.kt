@@ -3,6 +3,8 @@ package advent.ui.input
 import advent.Part
 import adventofcode.composeapp.generated.resources.Res
 import adventofcode.composeapp.generated.resources.sapin_cadeaux_advent_of_code_simple
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
@@ -22,6 +25,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -174,11 +178,29 @@ internal fun AskInput(
                 }
             }
         }
+
+        AnimatedVisibility(visible = isDebug) {
+            // TODO: give real values for params
+            DebugInput(debugInput = "TODO", editing = false)
+        }
+
         OutlinedIconButton(
             modifier = Modifier.padding(top = 16.dp),
             onClick = onValidate,
         ) {
             Icon(imageVector = Icons.Filled.Check, contentDescription = "Validate")
+        }
+    }
+}
+
+@Composable
+fun DebugInput(modifier: Modifier = Modifier, debugInput: String, editing: Boolean) {
+    Crossfade(modifier = modifier, targetState = editing) {
+        if (it) {
+            val textFieldState = rememberTextFieldState(initialText = debugInput)
+            TextField(state = textFieldState)
+        } else {
+            Text(text = debugInput)
         }
     }
 }

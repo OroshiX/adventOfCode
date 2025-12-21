@@ -3,6 +3,7 @@ package advent.ui
 import advent.Part
 import advent.ui.input.AskInput
 import advent.ui.input.AskInputContent
+import advent.ui.input.DebugInput
 import advent.ui.running.RunningDayContent
 import advent.ui.theme.AdventTheme
 import androidx.compose.runtime.Composable
@@ -32,6 +33,12 @@ fun AskInputContentPreview() = AdventTheme {
         onChangeDebug = {},
         onChangePart = {},
     )
+}
+
+@Preview
+@Composable
+fun DebugInputPreview() = AdventTheme {
+    DebugInput(debugInput = "My debug input", editing = true)
 }
 
 @Preview
