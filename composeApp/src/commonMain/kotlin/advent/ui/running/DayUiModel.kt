@@ -21,4 +21,10 @@ sealed class DayState {
         val sessionCookie: Boolean = false,
         val additionalReason: String? = null,
     ) : DayState()
+
+    data class Success(
+        override val dayNumber: Int,
+        val elapsed: Duration,
+        val result: String,
+    ) : DayState()
 }

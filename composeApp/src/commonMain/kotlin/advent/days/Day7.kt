@@ -2,6 +2,7 @@ package advent.days
 
 import advent.DayPuzzle
 import advent.Position
+import advent.service.Progress
 import java.util.*
 
 class Day7 : DayPuzzle<RayGrid>() {
@@ -14,11 +15,11 @@ class Day7 : DayPuzzle<RayGrid>() {
         return RayGrid(rows = grid.size, cols = grid.first().size, grid = grid)
     }
 
-    override fun solve1(input: RayGrid): String {
+    override fun solve1(input: RayGrid, onProgressUpdate: suspend (Progress) -> Unit): String {
         return input.howManySplits().toString()
     }
 
-    override fun solve2(input: RayGrid): String {
+    override fun solve2(input: RayGrid, onProgressUpdate: suspend (Progress) -> Unit): String {
         TODO()
     }
 }

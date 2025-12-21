@@ -1,6 +1,7 @@
 package advent.days
 
 import advent.DayPuzzle
+import advent.service.Progress
 import java.util.*
 import kotlin.math.max
 import kotlin.math.sign
@@ -25,7 +26,7 @@ class Day5 : DayPuzzle<IngredientList>() {
         return IngredientList(ranges, ingredientList)
     }
 
-    override fun solve1(input: IngredientList): String {
+    override fun solve1(input: IngredientList, onProgressUpdate: suspend (Progress) -> Unit): String {
         var sum = 0
         for (ingredient in input.ingredients) {
             if (input.isFresh(ingredient)) {
@@ -35,7 +36,7 @@ class Day5 : DayPuzzle<IngredientList>() {
         return sum.toString()
     }
 
-    override fun solve2(input: IngredientList): String {
+    override fun solve2(input: IngredientList, onProgressUpdate: suspend (Progress) -> Unit): String {
         val sortRanges = input.ranges.sortRanges()
         val separatedList = sortRanges.toSeparateRanges()
         var sum = 0L

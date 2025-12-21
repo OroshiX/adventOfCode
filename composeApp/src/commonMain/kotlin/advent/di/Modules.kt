@@ -10,6 +10,8 @@ import advent.ui.input.AskInputPresenter
 import advent.ui.input.AskInputPresenterImpl
 import advent.ui.running.DayPresenter
 import advent.ui.running.DayPresenterImpl
+import advent.ui.running.dialog.MissingInformationPresenter
+import advent.ui.running.dialog.MissingInformationPresenterImpl
 import org.koin.dsl.module
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
@@ -22,10 +24,14 @@ fun appModules() = listOf(
 
 val uiModule = module {
     factory<AskInputPresenter> { AskInputPresenterImpl(configManipulator = get()) }
+    factory<MissingInformationPresenter> { parameters ->
+        MissingInformationPresenterImpl(missingInformation = parameters.get())
+    }
     factory<DayPresenter> { parameters ->
         DayPresenterImpl(
             configManipulator = get(),
-            dayRunning = parameters.get()
+            dayRunning = parameters.get(),
+            adventSolver = get(),
         )
     }
 }

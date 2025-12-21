@@ -12,7 +12,7 @@ object FileSaver {
     }
 
     fun realData(numDay: Int, year: Int, cookie: String?): Result<File> {
-        val file = File(directory, "input$numDay.txt")
+        val file = realFile(numDay)
         if (file.exists()) return Result.success(file)
         if (cookie == null) return Result.failure(MissingCookieException())
         try {
@@ -26,14 +26,17 @@ object FileSaver {
         return Result.success(file)
     }
 
+    fun realFile(numDay: Int): File {
+        return File(directory, "input$numDay.txt")
+    }
+
     private fun debugFilename(numDay: Int, part: Part) = "t$numDay-${part.key}"
     fun debugExists(numDay: Int, part: Part): Boolean {
         return File(directory, debugFilename(numDay, part)).exists()
     }
 
     fun fileDebug(numDay: Int, part: Part): File {
-        val file = File(directory, debugFilename(numDay, part))
-        return file
+        return File(directory, debugFilename(numDay, part))
     }
 
     fun writeDebugFile(numDay: Int, part: Part, content: String): Result<Unit> {
@@ -60,6 +63,16 @@ object FileSaver {
                 input.copyTo(output)
             }
         }
+    }
+
+    fun inputFile(
+        numDay: Int,
+        part: Part,
+        debug: Boolean
+    ): File = if (debug) {
+        fileDebug(numDay = numDay, part = part)
+    } else {
+        realFile(numDay = numDay)
     }
 }
 

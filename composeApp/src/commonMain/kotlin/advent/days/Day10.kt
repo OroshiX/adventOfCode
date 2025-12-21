@@ -1,6 +1,7 @@
 package advent.days
 
 import advent.DayPuzzle
+import advent.service.Progress
 import java.util.*
 
 class Day10 : DayPuzzle<List<LightDiagram>>() {
@@ -42,12 +43,12 @@ class Day10 : DayPuzzle<List<LightDiagram>>() {
         return input
     }
 
-    override fun solve1(input: List<LightDiagram>): String {
+    override fun solve1(input: List<LightDiagram>, onProgressUpdate: suspend (Progress) -> Unit): String {
         val sumPresses = input.sumOf { it.solveCount1() }
         return sumPresses.toString()
     }
 
-    override fun solve2(input: List<LightDiagram>): String {
+    override fun solve2(input: List<LightDiagram>, onProgressUpdate: suspend (Progress) -> Unit): String {
         val sumPresses = input.sumOf { it.solveCount2() }
         return sumPresses.toString()
     }

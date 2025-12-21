@@ -1,6 +1,7 @@
 package advent.days
 
 import advent.DayPuzzle
+import advent.service.Progress
 import java.util.*
 
 class Day2 : DayPuzzle<List<Range>>() {
@@ -18,7 +19,7 @@ class Day2 : DayPuzzle<List<Range>>() {
         return ranges
     }
 
-    override fun solve1(input: List<Range>): String {
+    override fun solve1(input: List<Range>, onProgressUpdate: suspend (Progress) -> Unit): String {
         var sum = 0L
         for (range in input) {
             for (id in range.iterator()) {
@@ -30,7 +31,7 @@ class Day2 : DayPuzzle<List<Range>>() {
         return sum.toString()
     }
 
-    override fun solve2(input: List<Range>): String {
+    override fun solve2(input: List<Range>, onProgressUpdate: suspend (Progress) -> Unit): String {
         var sum = 0L
         for (range in input) {
             for (id in range.iterator()) {

@@ -1,6 +1,7 @@
 package advent.days
 
 import advent.DayPuzzle
+import advent.service.Progress
 import advent.terminal
 import com.github.ajalt.mordant.terminal.info
 import java.util.*
@@ -24,7 +25,7 @@ class Day1 : DayPuzzle<List<Rotation>>() {
         return rotations
     }
 
-    override fun solve1(input: List<Rotation>): String {
+    override fun solve1(input: List<Rotation>, onProgressUpdate: suspend (Progress) -> Unit): String {
         var position = 50
         var sum0 = 0
         for (rotation in input) {
@@ -37,7 +38,7 @@ class Day1 : DayPuzzle<List<Rotation>>() {
         return sum0.toString()
     }
 
-    override fun solve2(input: List<Rotation>): String {
+    override fun solve2(input: List<Rotation>, onProgressUpdate: suspend (Progress) -> Unit): String {
         var position = 50
         var res = 0
         for (rotation in input) {

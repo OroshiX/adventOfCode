@@ -1,6 +1,7 @@
 package advent.days
 
 import advent.DayPuzzle
+import advent.service.Progress
 import java.util.*
 import kotlin.math.pow
 
@@ -17,7 +18,7 @@ class Day8 : DayPuzzle<List<JunctionBox>>() {
         return boxes
     }
 
-    override fun solve1(input: List<JunctionBox>): String {
+    override fun solve1(input: List<JunctionBox>, onProgressUpdate: suspend (Progress) -> Unit): String {
         val toCircuits = input.withIndex().associate { it.value.id to it.index }.toMutableMap()
         val circuits = input.associate { it.id to setOf(it.id) }.toMutableMap()
         val excludeList = mutableSetOf<Pair<JunctionBox, JunctionBox>>()
@@ -33,7 +34,7 @@ class Day8 : DayPuzzle<List<JunctionBox>>() {
         return multiplier.toString()
     }
 
-    override fun solve2(input: List<JunctionBox>): String {
+    override fun solve2(input: List<JunctionBox>, onProgressUpdate: suspend (Progress) -> Unit): String {
         val toCircuits = input.withIndex().associate { it.value.id to it.index }.toMutableMap()
         val circuits = input.associate { it.id to setOf(it.id) }.toMutableMap()
         val excludeList = mutableSetOf<Pair<JunctionBox, JunctionBox>>()

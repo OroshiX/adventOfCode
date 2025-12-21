@@ -1,6 +1,7 @@
 package advent.days
 
 import advent.DayPuzzle
+import advent.service.Progress
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min
@@ -16,7 +17,7 @@ class Day9 : DayPuzzle<List<RedTile>>() {
         return redTiles
     }
 
-    override fun solve1(input: List<RedTile>): String {
+    override fun solve1(input: List<RedTile>, onProgressUpdate: suspend (Progress) -> Unit): String {
         var areaMax = 0L
         for (u in input.indices) {
             for (v in u + 1 until input.size) {
@@ -33,7 +34,7 @@ class Day9 : DayPuzzle<List<RedTile>>() {
         return areaMax.toString()
     }
 
-    override fun solve2(input: List<RedTile>): String {
+    override fun solve2(input: List<RedTile>, onProgressUpdate: suspend (Progress) -> Unit): String {
         TODO()
     }
 }

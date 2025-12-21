@@ -29,10 +29,17 @@ import advent.days.Day8
 import advent.days.Day9
 import advent.ui.config.ConfigManipulator
 import advent.ui.config.MissingCookieException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileInputStream
 import java.util.Scanner
 import kotlin.time.Clock
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
 import kotlin.time.ExperimentalTime
 
@@ -42,8 +49,14 @@ interface AdventSolver {
         part: Part,
         debug: Boolean,
         file: File,
-    ): Result<String>
+        onProgressUpdate: suspend (Progress) -> Unit,
+        onUpdateElapsed: suspend (Duration) -> Unit,
+    ): Result<AdventResult>
 }
+
+data class AdventResult(val result: String, val elapsedTime: Duration)
+
+data class Progress(val current: Int, val max: Int)
 
 @OptIn(ExperimentalTime::class)
 internal class AdventSolverImpl(
@@ -55,8 +68,10 @@ internal class AdventSolverImpl(
         dayNumber: Int,
         part: Part,
         debug: Boolean,
-        file: File
-    ): Result<String> {
+        file: File,
+        onProgressUpdate: suspend (Progress) -> Unit,
+        onUpdateElapsed: suspend (Duration) -> Unit,
+    ): Result<AdventResult> {
         val day = getDayByNumber(dayNumber)
 
         try {
@@ -64,10 +79,25 @@ internal class AdventSolverImpl(
 
 
             val startTime = clock.now()
-            val res = day.solve(scanner = scanner, part = part)
+
+            val job = withContext(Dispatchers.Default) {
+                launch {
+                    while (true) {
+                        delay(1.seconds)
+                        onUpdateElapsed(clock.now() - startTime)
+                    }
+                }
+            }
+            val res =
+                day.solve(
+                    scanner = scanner,
+                    part = part,
+                    onProgressUpdate = onProgressUpdate,
+                )
             val elapsedTime = clock.now() - startTime
+            job.cancel(message = "Finished solving")
             if (debug) {
-                val expected =configManipulator.getExpectedResult(dayNumber, part)
+                val expected = configManipulator.getExpectedResult(dayNumber, part)
                 if (expected == res) {
                     logger.success("✅ Debug result is okay")
                 } else {
@@ -76,7 +106,7 @@ internal class AdventSolverImpl(
             }
             logger.i("Took ${elapsedTime.toString(DurationUnit.MILLISECONDS)} ms to execute")
             logger.i("Result is $res")
-            return Result.success(res)
+            return Result.success(AdventResult(result = res, elapsedTime = elapsedTime))
         } catch (e: MissingCookieException) {
             return Result.failure(e)
         } catch (e: Throwable) {

@@ -6,11 +6,13 @@ import advent.ui.console.TerminalLog
 import advent.ui.input.AskInput
 import advent.ui.input.AskInputContent
 import advent.ui.input.InputWithLabel
+import advent.ui.running.DayState
 import advent.ui.running.RunningDayContent
 import advent.ui.theme.AdventTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlin.time.Duration.Companion.seconds
 
 
 @Preview
@@ -56,5 +58,12 @@ fun TerminalLogPreview() = AdventTheme {
 @Preview
 @Composable
 fun RunningDayContentPreview() = AdventTheme {
-    RunningDayContent()
+    RunningDayContent(
+        dayState = DayState.Success(
+            dayNumber = 5,
+            elapsed = 3.seconds,
+            result = "23"
+        ),
+
+    )
 }

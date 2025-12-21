@@ -1,6 +1,7 @@
 package advent.days
 
 import advent.DayPuzzle
+import advent.service.Progress
 import java.util.*
 
 class Day4 : DayPuzzle<ToiletPaperGrid>() {
@@ -16,7 +17,7 @@ class Day4 : DayPuzzle<ToiletPaperGrid>() {
         return ToiletPaperGrid(grid)
     }
 
-    override fun solve1(input: ToiletPaperGrid): String {
+    override fun solve1(input: ToiletPaperGrid, onProgressUpdate: suspend (Progress) -> Unit): String {
         var accessibleCount = 0
         for (i in input.grid.indices) {
             for (j in input.grid[0].indices) {
@@ -28,7 +29,7 @@ class Day4 : DayPuzzle<ToiletPaperGrid>() {
         return accessibleCount.toString()
     }
 
-    override fun solve2(input: ToiletPaperGrid): String {
+    override fun solve2(input: ToiletPaperGrid, onProgressUpdate: suspend (Progress) -> Unit): String {
         TODO()
     }
 }
