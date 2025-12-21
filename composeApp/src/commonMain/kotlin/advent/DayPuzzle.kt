@@ -1,6 +1,6 @@
 package advent
 
-import java.util.*
+import java.util.Scanner
 
 abstract class DayPuzzle<T> {
     fun solve(scanner: Scanner, part: Part): String {
@@ -34,4 +34,10 @@ enum class Part {
             ONE -> "Partie 1"
             TWO -> "Partie 2"
         }
+
+    companion object {
+        fun fromNumber(number: Int): Part? {
+            return Part.entries.firstOrNull { part -> part.number == number }
+        }
+    }
 }

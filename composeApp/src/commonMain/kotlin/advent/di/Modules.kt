@@ -22,7 +22,12 @@ fun appModules() = listOf(
 
 val uiModule = module {
     factory<AskInputPresenter> { AskInputPresenterImpl(configManipulator = get()) }
-    factory<DayPresenter> { DayPresenterImpl(configManipulator = get()) }
+    factory<DayPresenter> { parameters ->
+        DayPresenterImpl(
+            configManipulator = get(),
+            dayRunning = parameters.get()
+        )
+    }
 }
 
 @OptIn(ExperimentalTime::class)

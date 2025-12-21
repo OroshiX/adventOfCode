@@ -2,4 +2,4 @@ package advent.ui.input
 
 import advent.Part
 
-data class InputUiModel(val dayNumber: Int, val part: Part, val isDebug: Boolean)
+data class InputUiModel(val dayNumber: Int, val part: Part, val year: Int, val isDebug: Boolean)

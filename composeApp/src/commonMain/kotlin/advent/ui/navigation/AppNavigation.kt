@@ -6,28 +6,35 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import kotlinx.serialization.Serializable
 import org.koin.core.annotation.KoinExperimentalAPI
 
-enum class AdventScreens(val displayName: String, val route: String) {
-    SELECT_DAY("Select a day", "day"),
-    RUNNING("Solving the day", "running")
-}
+@Serializable
+data object SelectDay
+
+@Serializable
+data class DayRunning(val dayNumber: Int, val part: Int, val debug: Boolean, val year: Int)
 
 
 @OptIn(KoinExperimentalAPI::class)
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = AdventScreens.SELECT_DAY.route) {
-        composable(route = AdventScreens.SELECT_DAY.route) {
+    NavHost(navController = navController, startDestination = SelectDay) {
+        composable<SelectDay> {
             AskInputScreen(onRunDay = {
-                navController.navigate(route = AdventScreens.RUNNING.route)
+                navController.navigate(it)
             })
         }
-        composable(route = AdventScreens.RUNNING.route) {
-            RunningDayScreen(onBack = {
-                navController.popBackStack()
-            })
+        composable<DayRunning> {
+            val dayRunning: DayRunning = it.toRoute()
+            RunningDayScreen(
+                dayRunning = dayRunning,
+                onBack = {
+                    navController.popBackStack()
+                },
+            )
         }
     }
 }

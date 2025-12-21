@@ -1,5 +1,6 @@
 package advent.ui.running
 
+import advent.ui.navigation.DayRunning
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -18,13 +19,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import org.koin.compose.koinInject
+import org.koin.core.parameter.parametersOf
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RunningDayScreen(onBack: () -> Unit) {
-    val presenter: DayPresenter = koinInject()
+fun RunningDayScreen(dayRunning: DayRunning, onBack: () -> Unit) {
+    val presenter: DayPresenter = koinInject { parametersOf(dayRunning) }
     val uiState by presenter.dayState.collectAsState()
     Scaffold(topBar = {
         TopAppBar(title = {

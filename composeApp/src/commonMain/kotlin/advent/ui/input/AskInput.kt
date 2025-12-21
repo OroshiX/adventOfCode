@@ -1,6 +1,7 @@
 package advent.ui.input
 
 import advent.Part
+import advent.ui.navigation.DayRunning
 import adventofcode.composeapp.generated.resources.Res
 import adventofcode.composeapp.generated.resources.sapin_cadeaux_advent_of_code_simple
 import androidx.compose.foundation.Image
@@ -43,33 +44,36 @@ import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 
 @Composable
-fun AskInputScreen(onRunDay: () -> Unit) {
+fun AskInputScreen(onRunDay: (DayRunning) -> Unit) {
     val presenter: AskInputPresenter = koinInject()
     val uiModel by presenter.inputState.collectAsState()
     AskInputContent(
         dayNumber = uiModel.dayNumber,
         part = uiModel.part,
         isDebug = uiModel.isDebug,
+        year = uiModel.year,
         onChangeDay = presenter::changeDay,
         onChangePart = presenter::changePart,
+        onChangeYear = presenter::changeYear,
         onChangeDebug = presenter::changeData,
         onValidate = {
-            presenter.validate()
-            onRunDay()
+            val navigateTo: DayRunning = presenter.validate()
+            onRunDay(navigateTo)
         },
     )
-
 }
 
 @Composable
 fun AskInputContent(
     dayNumber: Int,
     part: Part,
+    year: Int,
     isDebug: Boolean,
     onChangeDay: (Int) -> Unit = {},
     onChangePart: (Part) -> Unit = {},
     onChangeDebug: (Boolean) -> Unit = {},
     onValidate: () -> Unit = {},
+    onChangeYear: (Int) -> Unit = {},
 ) {
     var height by remember { mutableStateOf(0) }
     Row(
@@ -89,10 +93,12 @@ fun AskInputContent(
             modifier = Modifier.height(heightDp).padding(vertical = 16.dp),
             dayNumber = dayNumber,
             part = part,
+            year = year,
             isDebug = isDebug,
             onChangeDay = onChangeDay,
             onChangePart = onChangePart,
             onChangeDebug = onChangeDebug,
+            onChangeYear = onChangeYear,
             onValidate = onValidate,
         )
     }
@@ -103,14 +109,24 @@ internal fun AskInput(
     modifier: Modifier = Modifier,
     dayNumber: Int,
     part: Part,
+    year: Int,
     isDebug: Boolean,
     onChangeDay: (Int) -> Unit = {},
     onChangePart: (Part) -> Unit = {},
+    onChangeYear: (Int) -> Unit = {},
     onChangeDebug: (Boolean) -> Unit = {},
     onValidate: () -> Unit = {},
 ) {
     Box(modifier = modifier.fillMaxWidth().padding(end = 8.dp, bottom = 8.dp)) {
         Column {
+            LabelDropdown(
+                modifier = Modifier.padding(bottom = 16.dp),
+                title = "Year",
+                selected = year,
+                dropdownOptions = (2020..2030).toList(),
+                onChooseOption = { onChangeYear(it) },
+                toLabel = { it.toString() },
+            )
             LabelDropdown(
                 title = "Day",
                 selected = dayNumber,

@@ -3,6 +3,7 @@ package advent.ui.running
 import advent.Part
 import advent.ui.config.ConfigManipulator
 import advent.ui.config.FileSaver
+import advent.ui.navigation.DayRunning
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,9 +18,12 @@ interface DayPresenter {
     fun retry()
 }
 
-class DayPresenterImpl(private val configManipulator: ConfigManipulator) : DayPresenter {
+class DayPresenterImpl(
+    private val configManipulator: ConfigManipulator,
+    private val dayRunning: DayRunning,
+) : DayPresenter {
     private val _dayState: MutableStateFlow<DayState> =
-        MutableStateFlow(DayState.Loading(configManipulator.numDay))
+        MutableStateFlow(DayState.Loading(dayRunning.dayNumber))
     override val dayState: StateFlow<DayState> = _dayState
 
     init {
@@ -29,10 +33,14 @@ class DayPresenterImpl(private val configManipulator: ConfigManipulator) : DayPr
     }
 
     private suspend fun checkInputs() {
-        val numDay = configManipulator.numDay
-        val part = configManipulator.part
-        val year = configManipulator.year
-        val debug = configManipulator.debug
+        val numDay = dayRunning.dayNumber
+        val part = Part.fromNumber(dayRunning.part) ?: run {
+            _dayState.update { DayState.Error(it.dayNumber) }
+            return
+        }
+        val year = dayRunning.year
+        val debug = dayRunning.debug
+
         val cookie = configManipulator.sessionCookie
         withContext(Dispatchers.IO) {
             if (debug) {
@@ -80,7 +88,7 @@ class DayPresenterImpl(private val configManipulator: ConfigManipulator) : DayPr
         }
     }
 
-    private fun startSolving(numDay: Int, part: Part, debug: Boolean) {
+    private fun startSolving() {
         // TODO
     }
 

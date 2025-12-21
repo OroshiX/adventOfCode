@@ -20,9 +20,8 @@ fun AskInputPreview() = AdventTheme {
         dayNumber = 1,
         part = Part.ONE,
         isDebug = false,
-        onChangeDay = {},
-        onChangePart = {},
-    ) {}
+        year = 2025,
+    )
 }
 
 @Preview
@@ -32,9 +31,7 @@ fun AskInputContentPreview() = AdventTheme {
         dayNumber = 1,
         part = Part.ONE,
         isDebug = true,
-        onChangeDay = {},
-        onChangeDebug = {},
-        onChangePart = {},
+        year = 2025,
     )
 }
 

@@ -26,11 +26,11 @@ koin-compose = { module = "io.insert-koin:koin-compose" }
 koin-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
 koin-navigation = { module = "io.insert-koin:koin-compose-navigation3" }
 compose-navigation = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "compose-navigation" }
-
 [plugins]
 composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "composeHotReload" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+serialization = { id = "plugin.serialization", version.ref = "kotlin"}
 [bundles]
 koin = ["koin-core", "koin-compose", "koin-viewmodel", "koin-navigation"]
