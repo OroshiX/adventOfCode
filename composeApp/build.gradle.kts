@@ -20,8 +20,13 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.material.icons)
             implementation(libs.okio.common)
 
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.bundles.koin)
+
+            implementation(libs.compose.navigation)
             implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0-RC")
             implementation("com.github.ajalt.mordant:mordant:3.0.2")
         }

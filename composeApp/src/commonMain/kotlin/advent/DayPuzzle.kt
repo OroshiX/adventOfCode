@@ -17,6 +17,7 @@ abstract class DayPuzzle<T> {
 
 enum class Part {
     ONE, TWO;
+
     val key: String
         get() = when (this) {
             ONE -> "part1"
@@ -27,5 +28,10 @@ enum class Part {
         get() = when (this) {
             ONE -> 1
             TWO -> 2
+        }
+    val display: String
+        get() = when (this) {
+            ONE -> "Partie 1"
+            TWO -> "Partie 2"
         }
 }
