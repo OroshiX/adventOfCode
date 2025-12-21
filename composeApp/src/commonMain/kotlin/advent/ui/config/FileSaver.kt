@@ -15,10 +15,14 @@ object FileSaver {
         val file = File(directory, "input$numDay.txt")
         if (file.exists()) return Result.success(file)
         if (cookie == null) return Result.failure(MissingCookieException())
-        download(
-            "https://adventofcode.com/$year/day/$numDay/input",
-            file, "session=$cookie"
-        )
+        try {
+            download(
+                "https://adventofcode.com/$year/day/$numDay/input",
+                file, "session=$cookie"
+            )
+        } catch (e: Throwable) {
+            return Result.failure(e)
+        }
         return Result.success(file)
     }
 

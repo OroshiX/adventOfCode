@@ -42,7 +42,6 @@ interface AdventSolver {
         part: Part,
         debug: Boolean,
         file: File,
-        cookie: String?
     ): Result<String>
 }
 
@@ -56,8 +55,7 @@ internal class AdventSolverImpl(
         dayNumber: Int,
         part: Part,
         debug: Boolean,
-        file: File,
-        cookie: String?
+        file: File
     ): Result<String> {
         val day = getDayByNumber(dayNumber)
 

@@ -12,12 +12,14 @@ interface ConfigManipulator {
     var part: Part
     var debug: Boolean
     var sessionCookie: String?
+    var year: Int
     fun getExpectedResult(numDay: Int, part: Part): String?
     fun setExpectedResult(numDay: Int, part: Part, expected: String)
 }
 
 private const val CONFIG = "config.properties"
 private const val KEY_NUM_DAY = "numDay"
+private const val KEY_YEAR = "year"
 private const val KEY_PART = "part"
 private const val KEY_DEBUG = "debug"
 private const val KEY_SESSION = "session"
@@ -44,6 +46,11 @@ internal class ConfigManipulatorImpl : ConfigManipulator {
         get() = getProperty(KEY_NUM_DAY)?.toIntOrNull() ?: 1
         set(value) {
             setProperty(KEY_NUM_DAY, value.toString())
+        }
+    override var year: Int
+        get() = getProperty(KEY_YEAR)?.toIntOrNull() ?: 2025
+        set(value) {
+            setProperty(KEY_YEAR, value.toString())
         }
     override var part: Part
         get() = getProperty(KEY_PART)?.toIntOrNull()?.let { Part.entries[it - 1] } ?: Part.ONE

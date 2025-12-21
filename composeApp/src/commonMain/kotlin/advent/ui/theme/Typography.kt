@@ -2,6 +2,7 @@ package advent.ui.theme
 
 import adventofcode.composeapp.generated.resources.Res
 import adventofcode.composeapp.generated.resources.Roboto
+import adventofcode.composeapp.generated.resources.RobotoMono
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -21,6 +22,11 @@ private val lineHeightStyle = LineHeightStyle(
 )
 
 @Composable
+fun robotoMono() = FontFamily(
+    Font(resource = Res.font.RobotoMono, weight = FontWeight.Normal),
+)
+
+@Composable
 fun AppTypography(): Typography {
     val roboto = FontFamily(
         Font(
@@ -28,6 +34,7 @@ fun AppTypography(): Typography {
             weight = FontWeight.Normal
         )
     )
+
     return Typography(
         headlineLarge = TextStyle(
             fontFamily = roboto,
@@ -122,6 +129,9 @@ fun AppTypography(): Typography {
         ),
     )
 }
+
+@Composable
+fun TextStyle.codeStyle(): TextStyle = copy(fontFamily = robotoMono())
 
 @Preview
 @Composable

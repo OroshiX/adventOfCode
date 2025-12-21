@@ -1,12 +1,15 @@
 package advent.ui
 
 import advent.Part
+import advent.ui.console.LogLine
+import advent.ui.console.TerminalLog
 import advent.ui.input.AskInput
 import advent.ui.input.AskInputContent
-import advent.ui.input.DebugInput
+import advent.ui.input.InputWithLabel
 import advent.ui.running.RunningDayContent
 import advent.ui.theme.AdventTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 
@@ -37,8 +40,19 @@ fun AskInputContentPreview() = AdventTheme {
 
 @Preview
 @Composable
-fun DebugInputPreview() = AdventTheme {
-    DebugInput(debugInput = "My debug input", editing = true)
+fun InputWithLabelPreview() = AdventTheme {
+    InputWithLabel(input = "My debug input", label = "Input", onTextChanged = {})
+}
+
+@Composable
+@Preview
+fun TerminalLogPreview() = AdventTheme {
+    TerminalLog(
+        logsLines = listOf(
+            LogLine("The input was\n[.##.] (3) (1,3) {1}", Color(0xffababab)),
+            LogLine("tata", Color(0xffafe212))
+        )
+    )
 }
 
 @Preview

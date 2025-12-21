@@ -1,6 +1,6 @@
 package advent.ui.console
 
-import advent.ui.theme.AdventTheme
+import advent.ui.theme.codeStyle
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,7 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun TerminalLog(modifier: Modifier = Modifier, logsLines: List<LogLine>) {
@@ -23,7 +22,11 @@ fun TerminalLog(modifier: Modifier = Modifier, logsLines: List<LogLine>) {
     ) {
         LazyColumn(modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)) {
             items(items = logsLines) {
-                Text(text = it.text, color = it.color)
+                Text(
+                    text = it.text,
+                    color = it.color,
+                    style = MaterialTheme.typography.bodyMedium.codeStyle()
+                )
             }
         }
     }
@@ -31,13 +34,3 @@ fun TerminalLog(modifier: Modifier = Modifier, logsLines: List<LogLine>) {
 
 data class LogLine(val text: String, val color: Color)
 
-@Composable
-@Preview
-fun TerminalLogPreview() = AdventTheme {
-    TerminalLog(
-        logsLines = listOf(
-            LogLine("toto", Color(0xffababab)),
-            LogLine("tata", Color(0xffafe212))
-        )
-    )
-}
