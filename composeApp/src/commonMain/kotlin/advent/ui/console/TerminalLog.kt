@@ -1,6 +1,8 @@
 package advent.ui.console
 
 import advent.ui.theme.codeStyle
+import advent.ui.theme.consoleContainer
+import advent.ui.theme.onConsoleContainer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,13 +20,13 @@ fun TerminalLog(modifier: Modifier = Modifier, logsLines: List<LogLine>) {
     Surface(
         modifier = modifier
             .fillMaxWidth(),
-        color = MaterialTheme.colorScheme.tertiaryContainer
+        color = MaterialTheme.colorScheme.consoleContainer()
     ) {
         LazyColumn(modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)) {
             items(items = logsLines) {
                 Text(
                     text = it.text,
-                    color = it.color,
+                    color = if (it.color == Color.Unspecified) MaterialTheme.colorScheme.onConsoleContainer() else it.color,
                     style = MaterialTheme.typography.bodyMedium.codeStyle()
                 )
             }
@@ -32,5 +34,5 @@ fun TerminalLog(modifier: Modifier = Modifier, logsLines: List<LogLine>) {
     }
 }
 
-data class LogLine(val text: String, val color: Color)
+data class LogLine(val text: String, val color: Color = Color.Unspecified)
 

@@ -50,7 +50,8 @@ fun TerminalLogPreview() = AdventTheme {
     TerminalLog(
         logsLines = listOf(
             LogLine("The input was\n[.##.] (3) (1,3) {1}", Color(0xffababab)),
-            LogLine("tata", Color(0xffafe212))
+            LogLine("tata", Color(0xffafe212)),
+            LogLine("No color specified")
         )
     )
 }
